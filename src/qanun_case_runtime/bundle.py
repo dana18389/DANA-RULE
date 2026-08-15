@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
-from typing import Mapping
+from typing import Any, Mapping
 import json
 import zipfile
 
@@ -28,6 +28,7 @@ class LoadedGovernanceBundle:
     bindings: Mapping[str, ArtifactBinding]
     snapshot: ExecutionSnapshot
     contracts: GovernanceContractRegistry
+    source_packages: Mapping[str, Mapping[str, Any]]
     unresolved_extraction_profiles: int
 
 
@@ -88,6 +89,7 @@ class GovernanceBundleLoader:
             }
 
             resolved: dict[str, tuple[str, str, bytes]] = {}
+            source_packages: dict[str, Mapping[str, Any]] = {}
             for artifact_id, prefix in self.BASELINE_PREFIXES.items():
                 matches = [
                     name
@@ -121,6 +123,7 @@ class GovernanceBundleLoader:
                         f"{artifact_id}: expected {expected_sha256}, got {actual_sha256}"
                     )
                 resolved[artifact_id] = (version, expected_sha256, payload)
+                source_packages[artifact_id] = json.loads(payload)
 
             governance_payload = archive.read(root + self.GOVERNANCE_V11)
             governance_item = next(
@@ -132,7 +135,8 @@ class GovernanceBundleLoader:
                     "Governance V1.1 raw file hash does not match delivery manifest"
                 )
 
-            contracts = GovernanceContractRegistry(json.loads(governance_payload))
+            governance_json = json.loads(governance_payload)
+            contracts = GovernanceContractRegistry(governance_json)
             report = contracts.validate()
             if not report.structurally_valid:
                 raise BundleValidationError(
@@ -140,8 +144,6 @@ class GovernanceBundleLoader:
                     + "; ".join(report.referential_errors[:5])
                 )
 
-            # Registry mutation occurs only after every delivery and baseline
-            # verification above has completed successfully.
             for artifact_id, (version, expected_sha256, payload) in resolved.items():
                 self.runtime.register_bytes(
                     artifact_id=artifact_id,
@@ -156,6 +158,7 @@ class GovernanceBundleLoader:
                 expected_sha256=governance_item["sha256"],
                 payload=governance_payload,
             )
+            source_packages["GOVERNANCE_V1_1"] = governance_json
 
             snapshot = self.runtime.snapshot(environment="registry_import")
             return LoadedGovernanceBundle(
@@ -164,6 +167,7 @@ class GovernanceBundleLoader:
                 bindings=dict(self.runtime.registry),
                 snapshot=snapshot,
                 contracts=contracts,
+                source_packages=source_packages,
                 unresolved_extraction_profiles=report.unresolved_profile_bindings,
             )
 
