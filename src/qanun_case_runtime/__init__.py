@@ -34,6 +34,17 @@ from .batch import (
     PerDocumentFixtureExtractor,
     normalize_arabic_name,
 )
+from .defense import (
+    DefensePackageError,
+    DefenseRegistryValidationReport,
+    DefenseRoutingDecision,
+    DefenseRegistry,
+    LoadedDefensePackage,
+    DefensePackageLoader,
+    DefenseShadowCandidate,
+    DefenseShadowObservation,
+    DefenseShadowEngine,
+)
 
 __all__ = [
     "GovernanceRuntime",
@@ -71,4 +82,13 @@ __all__ = [
     "GoldenIdentityOracle",
     "PerDocumentFixtureExtractor",
     "normalize_arabic_name",
+    "DefensePackageError",
+    "DefenseRegistryValidationReport",
+    "DefenseRoutingDecision",
+    "DefenseRegistry",
+    "LoadedDefensePackage",
+    "DefensePackageLoader",
+    "DefenseShadowCandidate",
+    "DefenseShadowObservation",
+    "DefenseShadowEngine",
 ]
