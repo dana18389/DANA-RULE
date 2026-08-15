@@ -9,6 +9,7 @@ from .contracts import (
     CandidateEnvelope,
     SandboxCandidatePipeline,
 )
+from .bundle import GovernanceBundleLoader, LoadedGovernanceBundle, BundleValidationError
 
 __all__ = [
     "GovernanceRuntime",
@@ -23,4 +24,7 @@ __all__ = [
     "RegistryValidationReport",
     "CandidateEnvelope",
     "SandboxCandidatePipeline",
+    "GovernanceBundleLoader",
+    "LoadedGovernanceBundle",
+    "BundleValidationError",
 ]
