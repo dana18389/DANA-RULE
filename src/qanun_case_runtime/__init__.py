@@ -10,6 +10,17 @@ from .contracts import (
     SandboxCandidatePipeline,
 )
 from .bundle import GovernanceBundleLoader, LoadedGovernanceBundle, BundleValidationError
+from .offline import (
+    OfflineExecutionError,
+    OutputValidationError,
+    ExecutionContract,
+    ExtractionResult,
+    ExtractorAdapter,
+    FixtureExtractor,
+    OfflineRunResult,
+    DocumentSchemaResolver,
+    OfflineCaseEngine,
+)
 
 __all__ = [
     "GovernanceRuntime",
@@ -27,4 +38,13 @@ __all__ = [
     "GovernanceBundleLoader",
     "LoadedGovernanceBundle",
     "BundleValidationError",
+    "OfflineExecutionError",
+    "OutputValidationError",
+    "ExecutionContract",
+    "ExtractionResult",
+    "ExtractorAdapter",
+    "FixtureExtractor",
+    "OfflineRunResult",
+    "DocumentSchemaResolver",
+    "OfflineCaseEngine",
 ]
