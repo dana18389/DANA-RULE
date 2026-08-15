@@ -23,6 +23,17 @@ from .offline import (
     CrossIndexAdapter,
     OfflineCaseEngine,
 )
+from .batch import (
+    BatchDocument,
+    BatchRunResult,
+    BatchOrchestrator,
+    IdentityResolution,
+    IdentityProvider,
+    PolicySafeIdentityCorrelator,
+    GoldenIdentityOracle,
+    PerDocumentFixtureExtractor,
+    normalize_arabic_name,
+)
 
 __all__ = [
     "GovernanceRuntime",
@@ -51,4 +62,13 @@ __all__ = [
     "DocumentSchemaResolver",
     "CrossIndexAdapter",
     "OfflineCaseEngine",
+    "BatchDocument",
+    "BatchRunResult",
+    "BatchOrchestrator",
+    "IdentityResolution",
+    "IdentityProvider",
+    "PolicySafeIdentityCorrelator",
+    "GoldenIdentityOracle",
+    "PerDocumentFixtureExtractor",
+    "normalize_arabic_name",
 ]
