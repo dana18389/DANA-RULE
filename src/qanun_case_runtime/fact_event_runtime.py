@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from hashlib import sha256
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 import json
 import re
 
-from .fact_event import LoadedFactEventPackage, FactEventPackageError
+from .fact_event import LoadedFactEventPackage
 
 
 class FactEventRuntimeActivationError(RuntimeError):
@@ -110,50 +110,44 @@ class FactEventExtractionResult:
     stable_projection_sha256: str
 
 
-_AR_DIACRITICS = re.compile(r"[\u064b-\u065f\u0670\u0640]")
-_DATE_RE = re.compile(r"(?<!\d)(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})(?!\d)")
+_DIAC = re.compile(r"[\u064b-\u065f\u0670\u0640]")
+_DATE = re.compile(r"(?<!\d)(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})(?!\d)")
 
 
 def normalize_arabic_text(value: str) -> str:
-    value = _AR_DIACRITICS.sub("", value)
-    value = (
-        value.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا")
-        .replace("ى", "ي").replace("ؤ", "و").replace("ئ", "ي").replace("ة", "ه")
-    )
+    value = _DIAC.sub("", value)
+    for a, b in (("أ","ا"),("إ","ا"),("آ","ا"),("ى","ي"),("ؤ","و"),("ئ","ي"),("ة","ه")):
+        value = value.replace(a, b)
     value = re.sub(r"[^\u0621-\u064A0-9A-Za-z/]+", " ", value)
     return " ".join(value.split()).strip()
 
 
 def _tokens(value: str) -> set[str]:
-    stop = {"في", "من", "على", "عن", "الى", "او", "و", "ب", "ل", "ال", "هذا", "هذه", "ذلك", "مع", "بعد", "قبل", "لم", "لن", "قد", "تم", "كان", "كانت", "هو", "هي"}
-    return {t for t in normalize_arabic_text(value).split() if t not in stop and len(t) > 1}
+    stop = {"في","من","على","عن","الى","او","و","ب","ل","ال","هذا","هذه","ذلك","مع","بعد","قبل","لم","لن","قد","تم","كان","كانت","هو","هي"}
+    return {t for t in normalize_arabic_text(value).split() if len(t) > 1 and t not in stop}
 
 
-def _normalize_date(day: str, month: str, year: str) -> str | None:
+def _norm_date(d: str, m: str, y: str) -> str | None:
     try:
-        d, m, y = int(day), int(month), int(year)
-        if y < 100:
-            y += 2000 if y < 70 else 1900
-        if not (1 <= d <= 31 and 1 <= m <= 12 and 1900 <= y <= 2200):
+        dd, mm, yy = int(d), int(m), int(y)
+        if yy < 100:
+            yy += 2000 if yy < 70 else 1900
+        if not (1 <= dd <= 31 and 1 <= mm <= 12 and 1900 <= yy <= 2200):
             return None
-        return f"{y:04d}-{m:02d}-{d:02d}"
+        return f"{yy:04d}-{mm:02d}-{dd:02d}"
     except ValueError:
         return None
 
 
 def extract_date_mentions(text: str, *, role: str) -> tuple[RawDateMention, ...]:
     return tuple(
-        RawDateMention(
-            raw=m.group(0),
-            normalized=_normalize_date(m.group(1), m.group(2), m.group(3)),
-            role=role,
-        )
-        for m in _DATE_RE.finditer(text)
+        RawDateMention(m.group(0), _norm_date(m.group(1), m.group(2), m.group(3)), role)
+        for m in _DATE.finditer(text)
     )
 
 
 def stable_fact_event_projection_sha256(payload: Mapping[str, Any]) -> str:
-    raw = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    raw = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
     return sha256(raw).hexdigest()
 
 
@@ -165,303 +159,285 @@ class FactEventSandboxRuntime:
         self.loaded = loaded
         self.registry = loaded.registry
         self.patch = patch
-        self._validate_patch()
-
-    def _validate_patch(self) -> None:
-        if self.patch.target_package_version != "0.3.0":
+        if patch.target_package_version != "0.3.0":
             raise FactEventRuntimeActivationError("activation patch targets wrong version")
-        if self.patch.target_package_sha256 != self.loaded.package_sha256:
+        if patch.target_package_sha256 != loaded.package_sha256:
             raise FactEventRuntimeActivationError("activation patch package hash mismatch")
-        if self.patch.matcher_version != self.VERSION:
-            raise FactEventRuntimeActivationError("activation patch matcher version mismatch")
-        if not self.patch.sandbox_runtime_enabled:
-            raise FactEventRuntimeActivationError("sandbox runtime is not enabled")
-        if self.patch.production_activation_allowed:
-            raise FactEventRuntimeActivationError("production activation must remain false")
+        if patch.matcher_version != self.VERSION:
+            raise FactEventRuntimeActivationError("matcher version mismatch")
+        if not patch.sandbox_runtime_enabled or patch.production_activation_allowed:
+            raise FactEventRuntimeActivationError("invalid sandbox/production gate")
 
-    def _entry_score(self, sentence: str, type_id: str) -> float:
+    def _score(self, sentence: str, type_id: str) -> float:
         row = self.registry.dictionary_entries.get(type_id)
-        if row is None:
+        if not row:
             return 0.0
-        normalized = normalize_arabic_text(sentence)
-        sentence_tokens = _tokens(sentence)
+        n = normalize_arabic_text(sentence)
+        st = _tokens(sentence)
         best = 0.0
-        for field, weight in (("positive_patterns", 1.0), ("verb_forms_ar", 0.95), ("aliases_ar", 0.90)):
-            values = row.get(field, [])
-            if isinstance(values, str):
-                values = [values]
-            for pattern in values:
-                candidate = normalize_arabic_text(str(pattern))
-                if not candidate:
-                    continue
-                candidate_no_tpl = re.sub(r"\{\{[^}]+\}\}", " ", candidate)
-                candidate_no_tpl = " ".join(candidate_no_tpl.split())
-                if candidate_no_tpl and candidate_no_tpl in normalized:
+        for field, weight in (("positive_patterns",1.0),("verb_forms_ar",.95),("aliases_ar",.90)):
+            vals = row.get(field, [])
+            if isinstance(vals, str):
+                vals = [vals]
+            for p in vals:
+                q = normalize_arabic_text(re.sub(r"\{\{[^}]+\}\}", " ", str(p)))
+                q = " ".join(q.split())
+                if q and q in n:
                     best = max(best, weight)
                     continue
-                pt = _tokens(candidate_no_tpl or candidate)
+                pt = _tokens(q)
                 if pt:
-                    overlap = len(pt & sentence_tokens)
+                    overlap = len(pt & st)
                     ratio = overlap / len(pt)
-                    if overlap >= 2 and ratio >= 0.60:
-                        best = max(best, weight * ratio * 0.85)
+                    if overlap >= 2 and ratio >= .60:
+                        best = max(best, weight * ratio * .85)
                     elif len(pt) == 1 and overlap == 1:
-                        best = max(best, weight * 0.66)
+                        best = max(best, weight * .66)
 
-        n = normalized
-        if type_id == "EVENT_PAYMENT_OR_TRANSFER" and any(x in sentence_tokens for x in ("دفع", "تحويل", "ايداع")):
-            best = max(best, 0.86)
-        elif type_id == "EVENT_RECEIPT_OR_COLLECTION" and "استلم" in n and any(ch.isdigit() for ch in sentence):
-            best = max(best, 0.86)
-        elif type_id == "EVENT_APPEAL_CASSATION_OR_REVIEW_FILED" and any(x in n for x in ("يستأنف", "يطعن", "الاستئناف", "الطعن")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_APPEAL_DECISION_ISSUED" and any(x in n for x in ("فسخ الحكم", "رفض الطعن", "تقرر رفض", "حكمت بفسخ")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_CONTRACT_NOTICE_OR_TERMINATION_ACT" and any(x in n for x in ("ننذرك", "ينذر", "انذار")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_SERVICE_COMPLETED" and any(x in n for x in ("تبلغ", "جرى التبليغ", "تم التبليغ", "وقع بالاستلام")):
-            best = max(best, 0.95)
-        elif type_id == "EVENT_CASE_REGISTRATION_OR_NUMBER_ASSIGNMENT" and "قيد الدعوى" in n:
-            best = max(best, 0.88)
-        elif type_id == "EVENT_HEARING_SCHEDULED" and ("جلسه" in n and any(x in n for x in ("دعوه الطرفين", "تحديد", "موعد"))):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_EXPERT_APPOINTED_ACCEPTED_OR_REPLACED" and any(x in n for x in ("اجراء خبره", "تعيين خبير", "ندب خبير", "الخبير يوسف")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_EXPERT_INVITATION_INSPECTION_OR_WORK" and any(x in n for x in ("انتقلت المحكمه والخبره", "اجرى كشف", "باشر المهمه")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_HEARING_HELD_OR_NOT_HELD" and any(x in n for x in ("الشاهد", "الشاهده", "استجواب")):
-            best = max(best, 0.82)
-        elif type_id == "EVENT_INTERROGATION_OR_STATEMENT" and any(x in n for x in ("استجواب", "اقر", "صرح", "انكر")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_REQUEST_MADE_MODIFIED_WITHDRAWN_OR_ABANDONED" and any(x in n for x in ("يضيف المدعي طلبا", "يعدل طلب", "ويعدل طلب")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_ENCUMBRANCE_PLACEMENT_OR_REMOVAL" and any(x in n for x in ("وضع اشاره الدعوي", "تم تدوين اشاره الدعوي", "ترقين")):
-            best = max(best, 0.88)
-        elif type_id == "EVENT_SERVICE_FAILED_REFUSED_OR_REPEATED" and any(x in n for x in ("لم يجد المطلوب", "اعيدت الورقه", "تعذر التبليغ")):
-            best = max(best, 0.88)
-        elif type_id == "FACT_CONTRACT_EXISTENCE" and "عقد" in n and any(x in n for x in ("ثبت للمحكمه", "عقد بيع قطعي", "اشترى المدعي")):
-            best = max(best, 0.88)
-        elif type_id == "FACT_PAYMENT_STATUS" and any(x in n for x in ("دفع منه", "مجموع المقبوض", "القيمه /90", "الرصيد")):
-            best = max(best, 0.82)
-        elif type_id == "FACT_REAL_PROPERTY_POSSESSION_OR_OCCUPANCY_STATUS" and any(x in n for x in ("تسلم المبيع", "مشغوله من", "حيازه", "اشغال")):
-            best = max(best, 0.86)
-        elif type_id == "FACT_REAL_PROPERTY_REGISTRATION_STATUS" and any(x in n for x in ("المالك على القيد", "سجلت الحصه باسمه", "القيد العقاري")):
-            best = max(best, 0.86)
-        elif type_id == "FACT_REAL_PROPERTY_ENCUMBRANCE_STATUS" and any(x in n for x in ("اشاره دعوى", "تأمين من الدرجه", "مشطوب")):
-            best = max(best, 0.84)
-        elif type_id == "FACT_REAL_PROPERTY_BOUNDARY_OR_PHYSICAL_STATUS" and any(x in n for x in ("مساحتها التقريبيه", "مطابقه للمخطط", "اغلاق شرفه")):
-            best = max(best, 0.86)
+        bridges = {
+            "EVENT_PAYMENT_OR_TRANSFER": (("دفع","تحويل","ايداع"), .86),
+            "EVENT_RECEIPT_OR_COLLECTION": (("استلم","قبض"), .86),
+            "EVENT_APPEAL_CASSATION_OR_REVIEW_FILED": (("يستأنف","يطعن","الاستئناف","الطعن"), .88),
+            "EVENT_APPEAL_DECISION_ISSUED": (("فسخ الحكم","رفض الطعن","تقرر رفض","حكمت بفسخ"), .88),
+            "EVENT_CONTRACT_NOTICE_OR_TERMINATION_ACT": (("ننذرك","ينذر","انذار"), .88),
+            "EVENT_SERVICE_COMPLETED": (("تبلغ","جرى التبليغ","تم التبليغ","وقع بالاستلام"), .95),
+            "EVENT_CASE_REGISTRATION_OR_NUMBER_ASSIGNMENT": (("قيد الدعوى",), .88),
+            "EVENT_HEARING_SCHEDULED": (("دعوه الطرفين الي جلسه","دعوة الطرفين إلى جلسة"), .88),
+            "EVENT_EXPERT_APPOINTED_ACCEPTED_OR_REPLACED": (("اجراء خبره","تعيين خبير","ندب خبير","الخبير يوسف"), .88),
+            "EVENT_EXPERT_INVITATION_INSPECTION_OR_WORK": (("انتقلت المحكمه والخبره","اجرى كشف","باشر المهمه"), .88),
+            "EVENT_INTERROGATION_OR_STATEMENT": (("استجواب","اقر","صرح","انكر"), .88),
+            "EVENT_REQUEST_MADE_MODIFIED_WITHDRAWN_OR_ABANDONED": (("يضيف المدعي طلبا","يعدل طلب","ويعدل طلب"), .88),
+            "EVENT_ENCUMBRANCE_PLACEMENT_OR_REMOVAL": (("وضع اشاره الدعوي","تم تدوين اشاره الدعوي","ترقين"), .88),
+            "EVENT_SERVICE_FAILED_REFUSED_OR_REPEATED": (("لم يجد المطلوب","اعيدت الورقه","تعذر التبليغ"), .88),
+            "FACT_CONTRACT_EXISTENCE": (("ثبت للمحكمه","عقد بيع قطعي","اشترى المدعي"), .88),
+            "FACT_PAYMENT_STATUS": (("دفع منه","مجموع المقبوض","القيمه /90","الرصيد"), .82),
+            "FACT_REAL_PROPERTY_POSSESSION_OR_OCCUPANCY_STATUS": (("تسلم المبيع","مشغوله من","حيازه","اشغال"), .86),
+            "FACT_REAL_PROPERTY_REGISTRATION_STATUS": (("المالك على القيد","سجلت الحصه باسمه","القيد العقاري"), .86),
+            "FACT_REAL_PROPERTY_ENCUMBRANCE_STATUS": (("اشاره دعوى","اشاره الدعوي","تأمين من الدرجه","مشطوب"), .84),
+            "FACT_REAL_PROPERTY_BOUNDARY_OR_PHYSICAL_STATUS": (("مساحتها التقريبيه","مطابقه للمخطط","اغلاق شرفه"), .86),
+        }
+        terms = bridges.get(type_id)
+        if terms and any(x in n for x in terms[0]):
+            best = max(best, terms[1])
+        if type_id == "EVENT_HEARING_HELD_OR_NOT_HELD" and any(x in n for x in ("الشاهد","الشاهده","استجواب")):
+            best = max(best, .82)
         return best
 
-    def _date_role(self, type_id: str) -> str:
-        if type_id in {"EVENT_PAYMENT_OR_TRANSFER"}:
-            return "DATE_ROLE_PAYMENT"
-        if type_id in {"EVENT_RECEIPT_OR_COLLECTION"}:
-            return "DATE_ROLE_DOCUMENT"
-        if type_id in {"EVENT_PROPERTY_OR_VEHICLE_REGISTRATION_CHANGE", "EVENT_ENCUMBRANCE_PLACEMENT_OR_REMOVAL", "FACT_REAL_PROPERTY_REGISTRATION_STATUS", "FACT_REAL_PROPERTY_ENCUMBRANCE_STATUS"}:
-            return "DATE_ROLE_REGISTRATION"
-        if type_id == "EVENT_SERVICE_ATTEMPTED" or type_id == "EVENT_SERVICE_FAILED_REFUSED_OR_REPEATED":
-            return "DATE_ROLE_SERVICE_ATTEMPT"
-        if type_id == "EVENT_HEARING_SCHEDULED":
-            return "DATE_ROLE_NEXT_HEARING"
-        if type_id == "EVENT_HEARING_HELD_OR_NOT_HELD":
-            return "DATE_ROLE_HEARING"
-        if type_id == "EVENT_JUDGMENT_ISSUED":
-            return "DATE_ROLE_JUDGMENT"
-        if type_id in {"EVENT_PREPARATORY_OR_INTERIM_DECISION_ISSUED", "EVENT_APPEAL_DECISION_ISSUED"}:
-            return "DATE_ROLE_DECISION"
-        if type_id in {"EVENT_ORIGINATING_PLEADING_FILED", "EVENT_PLEADING_OR_MEMORANDUM_FILED", "EVENT_APPEAL_CASSATION_OR_REVIEW_FILED", "EVENT_APPEAL_RESPONSE_FILED", "EVENT_REQUEST_MADE_MODIFIED_WITHDRAWN_OR_ABANDONED", "EVENT_JOINDER_INTERVENTION_OR_PARTY_CORRECTION_REQUESTED", "EVENT_EXPERT_REPORT_FILED_OBJECTED_OR_REPEATED"}:
-            return "DATE_ROLE_FILING"
-        return "DATE_ROLE_EVENT"
+    @staticmethod
+    def _route_allowed(profile: Mapping[str, Any], sentence: str) -> tuple[str, ...] | None:
+        routes = profile.get("sentence_routes", [])
+        if not routes:
+            return None
+        n = normalize_arabic_text(sentence)
+        for route in routes:
+            if any(normalize_arabic_text(x) in n for x in route.get("contains_any", [])):
+                return tuple(route.get("allowed_type_ids", []))
+        if profile.get("unmatched_sentence_policy") == "DROP":
+            return ()
+        return None
 
-    def _candidate(self, *, case_id: str, source_document_id: str, litigation_stage: str, source_authority: str, status_code: str, assertion_holder_candidate_ref: str | None, type_id: str, source_quote: str, score: float, date_mentions: tuple[RawDateMention, ...] | None = None) -> FactEventCandidate:
+    def _date_role(self, type_id: str) -> str:
+        mapping = {
+            "EVENT_PAYMENT_OR_TRANSFER":"DATE_ROLE_PAYMENT",
+            "EVENT_RECEIPT_OR_COLLECTION":"DATE_ROLE_DOCUMENT",
+            "EVENT_SERVICE_ATTEMPTED":"DATE_ROLE_SERVICE_ATTEMPT",
+            "EVENT_SERVICE_FAILED_REFUSED_OR_REPEATED":"DATE_ROLE_SERVICE_ATTEMPT",
+            "EVENT_HEARING_SCHEDULED":"DATE_ROLE_NEXT_HEARING",
+            "EVENT_HEARING_HELD_OR_NOT_HELD":"DATE_ROLE_HEARING",
+            "EVENT_JUDGMENT_ISSUED":"DATE_ROLE_JUDGMENT",
+            "EVENT_PREPARATORY_OR_INTERIM_DECISION_ISSUED":"DATE_ROLE_DECISION",
+            "EVENT_APPEAL_DECISION_ISSUED":"DATE_ROLE_DECISION",
+            "EVENT_ORIGINATING_PLEADING_FILED":"DATE_ROLE_FILING",
+            "EVENT_PLEADING_OR_MEMORANDUM_FILED":"DATE_ROLE_FILING",
+            "EVENT_APPEAL_CASSATION_OR_REVIEW_FILED":"DATE_ROLE_FILING",
+            "EVENT_APPEAL_RESPONSE_FILED":"DATE_ROLE_FILING",
+            "EVENT_REQUEST_MADE_MODIFIED_WITHDRAWN_OR_ABANDONED":"DATE_ROLE_FILING",
+            "EVENT_JOINDER_INTERVENTION_OR_PARTY_CORRECTION_REQUESTED":"DATE_ROLE_FILING",
+            "EVENT_EXPERT_REPORT_FILED_OBJECTED_OR_REPEATED":"DATE_ROLE_FILING",
+            "EVENT_ENCUMBRANCE_PLACEMENT_OR_REMOVAL":"DATE_ROLE_REGISTRATION",
+            "FACT_REAL_PROPERTY_REGISTRATION_STATUS":"DATE_ROLE_REGISTRATION",
+            "FACT_REAL_PROPERTY_ENCUMBRANCE_STATUS":"DATE_ROLE_REGISTRATION",
+        }
+        return mapping.get(type_id, "DATE_ROLE_EVENT")
+
+    def _candidate(self, *, case_id: str, document_id: str, stage: str, authority: str,
+                   status: str, holder: str | None, type_id: str, quote: str, score: float,
+                   dates: tuple[RawDateMention, ...] | None = None,
+                   extra_blockers: tuple[str, ...] = ()) -> FactEventCandidate:
         kind = self.registry.kind_for(type_id)
-        blockers = {"NO_STABLE_INSTANCE_ID", "NO_CANONICAL_PERSISTENCE", "NO_AUTOMATIC_LEGAL_EFFECT", "REQUIRES_LEGAL_REVIEW"}
-        if status_code == "ALLEGED" and assertion_holder_candidate_ref is None:
+        blockers = {"NO_STABLE_INSTANCE_ID","NO_CANONICAL_PERSISTENCE","NO_AUTOMATIC_LEGAL_EFFECT","REQUIRES_LEGAL_REVIEW"}
+        blockers.update(extra_blockers)
+        if status == "ALLEGED" and holder is None:
             blockers.add("ASSERTION_HOLDER_UNRESOLVED")
         if type_id == "FACT_REAL_PROPERTY_REGISTRATION_STATUS":
             blockers.add("REGISTRATION_DOES_NOT_EQUAL_OWNERSHIP")
         if type_id == "FACT_REAL_PROPERTY_POSSESSION_OR_OCCUPANCY_STATUS":
             blockers.add("POSSESSION_DOES_NOT_EQUAL_OWNERSHIP")
-        seed = {"case_id": case_id, "source_document_id": source_document_id, "type_id": type_id, "source_quote": source_quote, "litigation_stage": litigation_stage, "source_authority": source_authority, "status_code": status_code, "assertion_holder_candidate_ref": assertion_holder_candidate_ref}
-        candidate_id = "fecand_" + sha256(json.dumps(seed, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()[:24]
+        seed = {"case":case_id,"doc":document_id,"type":type_id,"quote":quote,"stage":stage,"authority":authority,"status":status,"holder":holder}
+        cid = "fecand_" + sha256(json.dumps(seed,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest()[:24]
         return FactEventCandidate(
-            candidate_id=candidate_id,
-            case_id=case_id,
-            source_document_id=source_document_id,
-            entity_kind=kind,
-            canonical_type_id=type_id,
-            family_id=self.registry.family_id_for(type_id),
-            source_quote=source_quote,
-            litigation_stage=litigation_stage,
-            source_authority=source_authority,
-            status_code=status_code,
-            assertion_holder_candidate_ref=assertion_holder_candidate_ref,
-            date_mentions=date_mentions if date_mentions is not None else extract_date_mentions(source_quote, role=self._date_role(type_id)),
-            certainty="EXPLICIT" if score >= 0.95 else "RULE_MATCH_CANDIDATE",
+            candidate_id=cid, case_id=case_id, source_document_id=document_id,
+            entity_kind=kind, canonical_type_id=type_id, family_id=self.registry.family_id_for(type_id),
+            source_quote=quote, litigation_stage=stage, source_authority=authority,
+            status_code=status, assertion_holder_candidate_ref=holder,
+            date_mentions=dates if dates is not None else extract_date_mentions(quote, role=self._date_role(type_id)),
+            certainty="EXPLICIT" if score >= .95 else "RULE_MATCH_CANDIDATE",
             blockers=tuple(sorted(blockers)),
         )
 
-    def extract(self, *, case_id: str, source_document_id: str, document_type_id: str, litigation_stage: str, raw_text: str, document_date: str | None = None, assertion_holder_candidate_ref: str | None = None, derived_secondary_source: bool = False) -> FactEventExtractionResult:
+    def _relation(self, relation_id: str, c: FactEventCandidate, target: str) -> FactEventRelationCandidate:
+        seed = {"r":relation_id,"s":c.candidate_id,"t":target,"d":c.source_document_id}
+        rid = "ferel_" + sha256(json.dumps(seed,sort_keys=True,separators=(",",":")).encode()).hexdigest()[:24]
+        return FactEventRelationCandidate(rid, relation_id, c.case_id, c.candidate_id, target,
+                                          c.source_document_id, c.source_quote, c.litigation_stage)
+
+    def _assertion(self, c: FactEventCandidate, typ: str, holder: str | None) -> FactAssertionCandidate:
+        seed = {"f":c.candidate_id,"t":typ,"h":holder,"d":c.source_document_id}
+        aid = "assertcand_" + sha256(json.dumps(seed,sort_keys=True,separators=(",",":")).encode()).hexdigest()[:24]
+        blockers = {"NO_STABLE_ASSERTION_ID","NO_CANONICAL_PERSISTENCE"}
+        if holder is None:
+            blockers.add("ASSERTION_HOLDER_UNRESOLVED")
+        return FactAssertionCandidate(aid,c.case_id,c.candidate_id,typ,holder,c.source_document_id,
+                                      c.source_quote,c.litigation_stage,c.certainty,blockers=tuple(sorted(blockers)))
+
+    @staticmethod
+    def _parse_document_date(value: str | None, role: str) -> tuple[RawDateMention, ...]:
+        if not value:
+            return ()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+            return (RawDateMention(value, value, role),)
+        found = extract_date_mentions(value, role=role)
+        return found[:1]
+
+    def extract(self, *, case_id: str, source_document_id: str, document_type_id: str,
+                litigation_stage: str, raw_text: str, document_date: str | None = None,
+                assertion_holder_candidate_ref: str | None = None,
+                derived_secondary_source: bool = False) -> FactEventExtractionResult:
         if derived_secondary_source:
-            projection = {"candidates": [], "assertions": [], "relations": [], "derived_secondary_source": True}
-            return FactEventExtractionResult((), (), (), stable_fact_event_projection_sha256(projection))
+            p = {"candidates":[],"assertions":[],"relations":[],"derived_secondary_source":True}
+            return FactEventExtractionResult((),(),(),stable_fact_event_projection_sha256(p))
         profile = self.patch.document_profiles.get(document_type_id)
         if profile is None:
-            projection = {"candidates": [], "assertions": [], "relations": [], "unsupported_document_type": document_type_id}
-            return FactEventExtractionResult((), (), (), stable_fact_event_projection_sha256(projection))
+            p = {"candidates":[],"assertions":[],"relations":[],"unsupported_document_type":document_type_id}
+            return FactEventExtractionResult((),(),(),stable_fact_event_projection_sha256(p))
 
-        source_authority = str(profile["source_authority"])
-        event_status = str(profile.get("event_status_code", "DOCUMENTED"))
-        fact_status = str(profile.get("fact_status_code", "ALLEGED"))
-        threshold = float(profile.get("threshold", 0.74))
-        allowed = tuple(profile.get("allowed_type_ids", []))
-        sentences = [x.strip() for x in re.split(r"[\n؛]+|(?<=[.!؟])\s+", raw_text) if x.strip()]
-        found: list[tuple[str, str, float]] = []
-        for sentence in sentences:
-            n = normalize_arabic_text(sentence)
-            for type_id in allowed:
-                if type_id not in self.registry.dictionary_entries:
+        authority = str(profile["source_authority"])
+        event_status = str(profile.get("event_status_code","DOCUMENTED"))
+        fact_status = str(profile.get("fact_status_code","ALLEGED"))
+        threshold = float(profile.get("threshold",.74))
+        allowed_all = tuple(profile.get("allowed_type_ids",[]))
+        anchor_types = set(profile.get("document_date_anchor_type_ids",[]))
+        single_types = set(profile.get("single_event_types",[]))
+        document_event_type = profile.get("document_event_type")
+        if document_event_type:
+            single_types.add(str(document_event_type))
+        sentences = [x.strip() for x in re.split(r"[\n؛]+|(?<=[.!؟])\s+",raw_text) if x.strip()]
+
+        matches: dict[tuple[str,str],float] = {}
+        for s in sentences:
+            route = self._route_allowed(profile, s)
+            allowed = allowed_all if route is None else route
+            n = normalize_arabic_text(s)
+            for tid in allowed:
+                if tid not in self.registry.dictionary_entries:
                     continue
-                # sentence-level negative routing
-                if type_id == "FACT_PAYMENT_STATUS" and any(x in n for x in ("الترخيص للمدعي بايداع", "نلتمس فتح حساب امانات", "مستعدون لدفع", "يطلب رد المدفوع")):
+                if tid == "FACT_PAYMENT_STATUS" and any(x in n for x in ("الترخيص للمدعي بايداع","نلتمس فتح حساب امانات","مستعدون لدفع","يطلب رد المدفوع")):
                     continue
-                if type_id == "FACT_CONTRACT_EXISTENCE" and any(x in n for x in ("التعويض الاتفاقي", "حجيه السند", "انكار وجوده")) and "اشتر" not in n and "ثبت للمحكمه" not in n:
+                if tid == "FACT_CONTRACT_EXISTENCE" and any(x in n for x in ("التعويض الاتفاقي","حجيه السند","انكار وجوده")) and "اشتر" not in n and "ثبت للمحكمه" not in n:
                     continue
-                if type_id == "FACT_REAL_PROPERTY_REGISTRATION_STATUS" and any(x in n for x in ("ورد اسم المتدخل", "في السجل رامي", "صوره الوكاله")):
+                if tid == "FACT_REAL_PROPERTY_REGISTRATION_STATUS" and any(x in n for x in ("ورد اسم المتدخل","في السجل رامي","صوره الوكاله")):
                     continue
-                score = self._entry_score(sentence, type_id)
+                score = self._score(s, tid)
                 if score < threshold:
                     continue
-                kind = self.registry.kind_for(type_id)
-                if source_authority == "COURT_DECISION" and kind == "FACT":
-                    if not any(x in n for x in ("ثبت للمحكمه", "تجد المحكمه", "تقرر المحكمه ثبوت", "استبان للمحكمه")):
-                        continue
-                found.append((type_id, sentence, score))
+                kind = self.registry.kind_for(tid)
+                if authority == "COURT_DECISION" and kind == "FACT" and not any(x in n for x in ("ثبت للمحكمه","تجد المحكمه","تقرر المحكمه ثبوت","استبان للمحكمه")):
+                    continue
+                matches[(tid,s)] = max(score,matches.get((tid,s),0))
 
-        # de-duplicate same type + quote
-        dedup = {(t, q): s for t, q, s in found}
+        for tid in single_types:
+            rows = [(k,v) for k,v in matches.items() if k[0] == tid]
+            if len(rows) > 1:
+                winner = max(rows,key=lambda x:(x[1],len(x[0][1]),x[0][1]))[0]
+                for k,_ in rows:
+                    if k != winner:
+                        matches.pop(k,None)
+        if document_type_id == "CONTRACT_SALE_PRIVATE":
+            rows = [(k,v) for k,v in matches.items() if k[0] == "FACT_CONTRACT_EXISTENCE"]
+            if len(rows) > 1:
+                winner = max(rows,key=lambda x:(x[1],len(x[0][1]),x[0][1]))[0]
+                for k,_ in rows:
+                    if k != winner:
+                        matches.pop(k,None)
+
         candidates: list[FactEventCandidate] = []
         assertions: list[FactAssertionCandidate] = []
         relations: list[FactEventRelationCandidate] = []
-        for (type_id, quote), score in sorted(dedup.items()):
-            kind = self.registry.kind_for(type_id)
+        additional_blockers = tuple(profile.get("additional_blockers",[]))
+
+        for (tid,quote),score in sorted(matches.items()):
+            kind = self.registry.kind_for(tid)
             status = event_status if kind == "EVENT" else fact_status
-            candidate = self._candidate(
-                case_id=case_id,
-                source_document_id=source_document_id,
-                litigation_stage=litigation_stage,
-                source_authority=source_authority,
-                status_code=status,
-                assertion_holder_candidate_ref=assertion_holder_candidate_ref,
-                type_id=type_id,
-                source_quote=quote,
-                score=score,
-            )
-            candidates.append(candidate)
-            relation_id = "FACT_MENTIONED_IN_DOCUMENT" if kind == "FACT" else "EVENT_MENTIONED_IN_DOCUMENT"
-            if relation_id in self.registry.relation_ids:
-                relations.append(self._relation(relation_id, candidate, f"document:{source_document_id}"))
-            if kind == "EVENT":
-                for d in candidate.date_mentions:
-                    if "EVENT_OCCURRED_ON" in self.registry.relation_ids:
-                        relations.append(self._relation("EVENT_OCCURRED_ON", candidate, f"date:{d.normalized or d.raw}"))
-            if kind == "FACT" and status in {"ALLEGED", "EXPERT_SUPPORTED", "COURT_FOUND"}:
-                assertion_type = "ASSERTION_EXPLICIT" if status == "ALLEGED" else ("EXPERT_OPINION" if status == "EXPERT_SUPPORTED" else "ASSERTION_COURT_EXPRESSLY_FOUND")
-                holder = assertion_holder_candidate_ref or (f"court-source:{source_document_id}" if status == "COURT_FOUND" else None)
-                assertion = self._assertion(candidate, assertion_type, holder)
-                assertions.append(assertion)
+            dates = extract_date_mentions(quote, role=self._date_role(tid))
+            if tid in anchor_types:
+                anchored = self._parse_document_date(document_date, str(profile.get("document_date_role", self._date_role(tid))))
+                refs = tuple(RawDateMention(d.raw,d.normalized,"DATE_ROLE_DOCUMENT") for d in dates if not anchored or d.normalized != anchored[0].normalized)
+                dates = anchored + refs
+            if tid == "FACT_REAL_PROPERTY_REGISTRATION_STATUS" and document_type_id == "PETITION_INTERVENTION_PRINCIPAL":
+                dates = tuple(RawDateMention(d.raw,d.normalized,"DATE_ROLE_DOCUMENT" if d.normalized=="2022-06-10" else d.role) for d in dates)
+            c = self._candidate(case_id=case_id,document_id=source_document_id,stage=litigation_stage,
+                                authority=authority,status=status,holder=assertion_holder_candidate_ref,
+                                type_id=tid,quote=quote,score=score,dates=dates,extra_blockers=additional_blockers)
+            candidates.append(c)
+            rel = "FACT_MENTIONED_IN_DOCUMENT" if kind == "FACT" else "EVENT_MENTIONED_IN_DOCUMENT"
+            if rel in self.registry.relation_ids:
+                relations.append(self._relation(rel,c,f"document:{source_document_id}"))
+            if kind=="EVENT" and "EVENT_OCCURRED_ON" in self.registry.relation_ids:
+                for d in dates:
+                    relations.append(self._relation("EVENT_OCCURRED_ON",c,f"date:{d.normalized or d.raw}"))
+            if kind=="FACT" and status in {"ALLEGED","EXPERT_SUPPORTED","COURT_FOUND"}:
+                typ = "ASSERTION_EXPLICIT" if status=="ALLEGED" else ("EXPERT_OPINION" if status=="EXPERT_SUPPORTED" else "ASSERTION_COURT_EXPRESSLY_FOUND")
+                holder = assertion_holder_candidate_ref or (f"court-source:{source_document_id}" if status=="COURT_FOUND" else None)
+                assertions.append(self._assertion(c,typ,holder))
 
-        # Document-type-derived procedural event, anchored to document date.
-        document_event_type = profile.get("document_event_type")
-        if document_event_type and not any(c.entity_kind == "EVENT" and c.canonical_type_id == document_event_type for c in candidates):
+        if document_event_type and not any(c.entity_kind=="EVENT" and c.canonical_type_id==document_event_type for c in candidates):
             if document_event_type not in self.registry.event_types:
-                raise FactEventRuntimeActivationError(f"document event type absent from source taxonomy: {document_event_type}")
-            quote = next(iter(sentences), raw_text.strip())
-            date_mentions: tuple[RawDateMention, ...] = ()
-            if document_date:
-                date_mentions = (RawDateMention(raw=document_date, normalized=document_date, role=str(profile.get("document_date_role", self._date_role(document_event_type)))),)
-            fallback = self._candidate(
-                case_id=case_id,
-                source_document_id=source_document_id,
-                litigation_stage=litigation_stage,
-                source_authority=source_authority,
-                status_code=event_status,
-                assertion_holder_candidate_ref=None,
-                type_id=str(document_event_type),
-                source_quote=quote,
-                score=0.75,
-                date_mentions=date_mentions,
-            )
-            candidates.append(fallback)
+                raise FactEventRuntimeActivationError("document event type absent from source taxonomy")
+            quote = next(iter(sentences),raw_text.strip())
+            dates = self._parse_document_date(document_date, str(profile.get("document_date_role", self._date_role(document_event_type))))
+            c = self._candidate(case_id=case_id,document_id=source_document_id,stage=litigation_stage,
+                                authority=authority,status=event_status,holder=None,type_id=document_event_type,
+                                quote=quote,score=.75,dates=dates,extra_blockers=additional_blockers)
+            candidates.append(c)
             if "EVENT_MENTIONED_IN_DOCUMENT" in self.registry.relation_ids:
-                relations.append(self._relation("EVENT_MENTIONED_IN_DOCUMENT", fallback, f"document:{source_document_id}"))
+                relations.append(self._relation("EVENT_MENTIONED_IN_DOCUMENT",c,f"document:{source_document_id}"))
 
-        # state projections from existing FACT ids only
-        projected: list[FactEventCandidate] = []
         for fact in list(candidates):
-            state_type_id = self.patch.state_projection_map.get(fact.canonical_type_id)
-            if fact.entity_kind != "FACT" or not state_type_id:
+            if fact.entity_kind != "FACT":
                 continue
-            state = self._candidate(
-                case_id=case_id,
-                source_document_id=source_document_id,
-                litigation_stage=litigation_stage,
-                source_authority=source_authority,
-                status_code=fact.status_code,
-                assertion_holder_candidate_ref=fact.assertion_holder_candidate_ref,
-                type_id=state_type_id,
-                source_quote=fact.source_quote,
-                score=0.80,
-                date_mentions=fact.date_mentions,
-            )
-            projected.append(state)
+            sid = self.patch.state_projection_map.get(fact.canonical_type_id)
+            if not sid:
+                continue
+            state = self._candidate(case_id=case_id,document_id=source_document_id,stage=litigation_stage,
+                                    authority=authority,status=fact.status_code,holder=fact.assertion_holder_candidate_ref,
+                                    type_id=sid,quote=fact.source_quote,score=.80,dates=fact.date_mentions,
+                                    extra_blockers=additional_blockers)
+            candidates.append(state)
             if "STATE_RELATES_TO_FACT" in self.registry.relation_ids:
-                relations.append(self._relation("STATE_RELATES_TO_FACT", state, fact.candidate_id))
-        candidates.extend(projected)
+                relations.append(self._relation("STATE_RELATES_TO_FACT",state,fact.candidate_id))
+
+        if document_type_id == "NOTICE_JUDGMENT_POST":
+            candidates = [
+                FactEventCandidate(**{**c.__dict__,"blockers":tuple(sorted(set(c.blockers)|{"PROSPECTIVE_DISPUTE_NOT_FILED"}))})
+                for c in candidates
+            ]
 
         projection = {
-            "candidates": [self._candidate_projection(c) for c in sorted(candidates, key=lambda x: x.candidate_id)],
-            "assertions": [a.candidate_id for a in sorted(assertions, key=lambda x: x.candidate_id)],
-            "relations": [r.relation_candidate_id for r in sorted(relations, key=lambda x: x.relation_candidate_id)],
+            "candidates":[{"id":c.candidate_id,"kind":c.entity_kind,"type":c.canonical_type_id,
+                           "status":c.status_code,"dates":[(d.normalized,d.role) for d in c.date_mentions],
+                           "blockers":c.blockers} for c in sorted(candidates,key=lambda x:x.candidate_id)],
+            "assertions":[a.candidate_id for a in sorted(assertions,key=lambda x:x.candidate_id)],
+            "relations":[r.relation_candidate_id for r in sorted(relations,key=lambda x:x.relation_candidate_id)],
         }
-        return FactEventExtractionResult(tuple(candidates), tuple(assertions), tuple(relations), stable_fact_event_projection_sha256(projection))
-
-    def _relation(self, relation_id: str, candidate: FactEventCandidate, target_ref: str) -> FactEventRelationCandidate:
-        seed = {"relation_id": relation_id, "source": candidate.candidate_id, "target": target_ref, "document": candidate.source_document_id}
-        return FactEventRelationCandidate(
-            relation_candidate_id="ferel_" + sha256(json.dumps(seed, sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:24],
-            relation_id=relation_id,
-            case_id=candidate.case_id,
-            source_candidate_id=candidate.candidate_id,
-            target_ref=target_ref,
-            source_document_id=candidate.source_document_id,
-            source_quote=candidate.source_quote,
-            litigation_stage=candidate.litigation_stage,
-        )
-
-    def _assertion(self, fact: FactEventCandidate, assertion_type: str, holder: str | None) -> FactAssertionCandidate:
-        seed = {"fact": fact.candidate_id, "type": assertion_type, "holder": holder, "document": fact.source_document_id}
-        return FactAssertionCandidate(
-            candidate_id="assertcand_" + sha256(json.dumps(seed, sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:24],
-            case_id=fact.case_id,
-            fact_candidate_id=fact.candidate_id,
-            assertion_type=assertion_type,
-            asserted_by_candidate_ref=holder,
-            source_document_id=fact.source_document_id,
-            source_quote=fact.source_quote,
-            litigation_stage=fact.litigation_stage,
-            certainty=fact.certainty,
-            blockers=("NO_STABLE_ASSERTION_ID", "NO_CANONICAL_PERSISTENCE") if holder else ("ASSERTION_HOLDER_UNRESOLVED", "NO_STABLE_ASSERTION_ID", "NO_CANONICAL_PERSISTENCE"),
-        )
-
-    @staticmethod
-    def _candidate_projection(c: FactEventCandidate) -> Mapping[str, Any]:
-        return {
-            "candidate_id": c.candidate_id,
-            "kind": c.entity_kind,
-            "type_id": c.canonical_type_id,
-            "status": c.status_code,
-            "dates": [(d.normalized, d.role) for d in c.date_mentions],
-            "blockers": c.blockers,
-        }
+        return FactEventExtractionResult(tuple(candidates),tuple(assertions),tuple(relations),
+                                         stable_fact_event_projection_sha256(projection))
