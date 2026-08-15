@@ -55,6 +55,31 @@ from .defense_runtime import (
     normalize_arabic_text,
     stable_defense_projection_sha256,
 )
+from .fact_event import (
+    FactEventPackageError,
+    FactEventValidationReport,
+    FactEventRegistry,
+    LoadedFactEventPackage,
+    FactEventPackageLoader,
+)
+from .fact_event_runtime import (
+    FactEventRuntimeActivationError,
+    FactEventActivationPatch,
+    RawDateMention,
+    FactEventCandidate,
+    FactAssertionCandidate,
+    FactEventRelationCandidate,
+    FactEventExtractionResult,
+    FactEventSandboxRuntime,
+    normalize_arabic_text as normalize_fact_event_arabic_text,
+    extract_date_mentions,
+    stable_fact_event_projection_sha256,
+)
+from .fact_event_batch import (
+    FactEventBatchDocument,
+    FactEventBatchRunResult,
+    FactEventBatchOrchestrator,
+)
 
 __all__ = [
     "GovernanceRuntime",
@@ -109,4 +134,23 @@ __all__ = [
     "DefenseSandboxRuntime",
     "normalize_arabic_text",
     "stable_defense_projection_sha256",
+    "FactEventPackageError",
+    "FactEventValidationReport",
+    "FactEventRegistry",
+    "LoadedFactEventPackage",
+    "FactEventPackageLoader",
+    "FactEventRuntimeActivationError",
+    "FactEventActivationPatch",
+    "RawDateMention",
+    "FactEventCandidate",
+    "FactAssertionCandidate",
+    "FactEventRelationCandidate",
+    "FactEventExtractionResult",
+    "FactEventSandboxRuntime",
+    "normalize_fact_event_arabic_text",
+    "extract_date_mentions",
+    "stable_fact_event_projection_sha256",
+    "FactEventBatchDocument",
+    "FactEventBatchRunResult",
+    "FactEventBatchOrchestrator",
 ]
