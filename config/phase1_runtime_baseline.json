@@ -1,0 +1,53 @@
+{
+  "baseline_id": "PHASE_1_RUNTIME_BASELINE",
+  "status": "FROZEN_TEST_BASELINE",
+  "case_id": "CASE-SY-DAM-REALTY-2022-000731",
+  "scope": [
+    "DOCUMENT",
+    "PARTY",
+    "REQUEST"
+  ],
+  "execution_mode": "OFFLINE_FIXTURE_TEST",
+  "governance_bundle_sha256": "ba67faab762f7286c9164747a3bc2e26933e5627f502293f2de44d9880f35e8a",
+  "golden_case_document_units_after_segmentation": 25,
+  "stable_projection_sha256": "86a0fd5861ca16d095745d5402a6086a8f5f7c885d32914340b55b3e53271524",
+  "checks": {
+    "bundle_verified": "PASS",
+    "document_schema_all_valid": "PASS",
+    "document_party_handoff_schema_all_valid": "PASS",
+    "request_provenance_all_valid": "PASS",
+    "party_non_party_separation": "PASS",
+    "party_role_changes_preserved": "PASS",
+    "rami_orthographic_variant_test_oracle": "PASS",
+    "stable_party_ids_issued": false,
+    "reiterated_requests_linked": "PASS",
+    "alternative_requests_preserved_distinct": "PASS",
+    "stable_request_ids_issued": false,
+    "same_input_rerun_determinism": "PASS",
+    "input_order_invariance_after_batch_sort": "PASS",
+    "canonical_persistence_allowed": false,
+    "derived_summary_creates_party_or_request": false,
+    "judge_parties_isolated_to_related_case_scope": "PASS"
+  },
+  "production_blockers": [
+    "UNKNOWN_EXTRACTION_PROFILE_FOR_226_DOCUMENT_BINDINGS",
+    "PARTY_RESOLUTION_SERVICE_NOT_PRESENT_IN_SOURCE_PACKAGE",
+    "REQUEST_IDENTITY_SERVICE_NOT_PRESENT_IN_SOURCE_PACKAGE"
+  ],
+  "identity_test_policy": {
+    "golden_identity_oracle": "TEST_ONLY",
+    "production_name_only_merge": "FORBIDDEN",
+    "canonical_party_merge_performed": false
+  },
+  "request_test_policy": {
+    "golden_reiteration_oracle": "TEST_ONLY_WHERE_EXPLICITLY_MARKED_REITERATED",
+    "text_similarity_only_identity": "FORBIDDEN",
+    "canonical_request_identity_performed": false
+  },
+  "limitations": [
+    "Raw-text LLM extraction is not exercised in this baseline; structured fixtures are validated against the real DOCUMENT runtime JSON schemas.",
+    "Document types are source-aligned expected types supplied by the golden dataset; the live classification model is not exercised.",
+    "The baseline validates candidate generation, cross-index contracts, case-scoped correlation, request lifecycle structure and deterministic replay, not production canonical resolution."
+  ],
+  "production_activation_eligible": false
+}
