@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qanun-case-runtime"
+version = "0.1.0"
+description = "Governed runtime for QANUN AI Case Intelligence"
+requires-python = ">=3.11"
+dependencies = ["jsonschema>=4.21"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

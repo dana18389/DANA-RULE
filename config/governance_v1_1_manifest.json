@@ -1,0 +1,16 @@
+{
+  "governance_id": "CASE_EXTRACTION_GOVERNANCE",
+  "governance_version": "1.1",
+  "production_activation_allowed": false,
+  "source_packages_immutable": true,
+  "artifact_hashes": {
+    "DOCUMENT": "bf607f3dc03b426de47a1bc6cde0f3392ee882aaa2001cb14fb8b1956defab4d",
+    "PARTY": "47993bdd98de1a644dd4352815ce33e9be1da2b0ef7e8697f934fe5c0b87d5f0",
+    "REQUEST": "4e6908192f2f529a356f4c105a0afb6a5cf6987d9167ab75f0b8055a45e69e80",
+    "DOCUMENT_PARTY": "d4a750a682d28f4c36558f56c791dfa5f0c34a87f410685f9a5aed43f735bc8d",
+    "DOCUMENT_PARTY_COMPATIBILITY_ADAPTER": "f74fffe6faed04b8e2fa0f24e121a8c207ec03f3a3a1f1364cb2c7db0f6fd59d",
+    "REQUEST_CROSS_INDEX": "59934d7a5a37f81cf84cffb10cd8afe547d383bf0c1187d52cc3a92311738360",
+    "THREE_INDEX_BINDING": "047af04aef2aa95ae84bf61b7d273b36af042186c6312c47c17226bae6e8b4cf",
+    "GOVERNANCE_V1": "6cd46a3d65afed5d5d1730944939db55e5a0def6a9d70ce8932bd93bf2bfde33"
+  }
+}
