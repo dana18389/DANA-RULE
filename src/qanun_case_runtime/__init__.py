@@ -80,6 +80,28 @@ from .fact_event_batch import (
     FactEventBatchRunResult,
     FactEventBatchOrchestrator,
 )
+from .evidence import (
+    EvidencePackageError,
+    EvidenceValidationReport,
+    EvidenceRegistry,
+    LoadedEvidencePackage,
+    EvidencePackageLoader,
+)
+from .evidence_runtime import (
+    EvidenceRuntimeActivationError,
+    EvidenceActivationPatch,
+    EvidenceCandidate,
+    EvidenceRelationCandidate,
+    EvidenceExtractionResult,
+    EvidenceSandboxRuntime,
+    normalize_arabic_text as normalize_evidence_arabic_text,
+    stable_evidence_projection_sha256,
+)
+from .evidence_batch import (
+    EvidenceBatchDocument,
+    EvidenceBatchRunResult,
+    EvidenceBatchOrchestrator,
+)
 
 __all__ = [
     "GovernanceRuntime",
@@ -153,4 +175,20 @@ __all__ = [
     "FactEventBatchDocument",
     "FactEventBatchRunResult",
     "FactEventBatchOrchestrator",
+    "EvidencePackageError",
+    "EvidenceValidationReport",
+    "EvidenceRegistry",
+    "LoadedEvidencePackage",
+    "EvidencePackageLoader",
+    "EvidenceRuntimeActivationError",
+    "EvidenceActivationPatch",
+    "EvidenceCandidate",
+    "EvidenceRelationCandidate",
+    "EvidenceExtractionResult",
+    "EvidenceSandboxRuntime",
+    "normalize_evidence_arabic_text",
+    "stable_evidence_projection_sha256",
+    "EvidenceBatchDocument",
+    "EvidenceBatchRunResult",
+    "EvidenceBatchOrchestrator",
 ]
