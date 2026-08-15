@@ -17,8 +17,10 @@ from .offline import (
     ExtractionResult,
     ExtractorAdapter,
     FixtureExtractor,
+    IndexCandidate,
     OfflineRunResult,
     DocumentSchemaResolver,
+    CrossIndexAdapter,
     OfflineCaseEngine,
 )
 
@@ -44,7 +46,9 @@ __all__ = [
     "ExtractionResult",
     "ExtractorAdapter",
     "FixtureExtractor",
+    "IndexCandidate",
     "OfflineRunResult",
     "DocumentSchemaResolver",
+    "CrossIndexAdapter",
     "OfflineCaseEngine",
 ]
