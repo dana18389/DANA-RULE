@@ -116,6 +116,9 @@ def test_valid_fixture_runs_document_party_request_handoff_candidate_only():
         document_type_id="CIVIL_CLAIM_PETITION",
         raw_text="استدعاء دعوى مطالبة مالية",
         extractor=FixtureExtractor({"CIVIL_CLAIM_PETITION": fixture}),
+        matter_id="MATTER-001",
+        proceeding_id="PROCEEDING-001",
+        litigation_stage="FIRST_INSTANCE",
         allow_unresolved_profile_for_fixture=True,
     )
 
@@ -124,11 +127,34 @@ def test_valid_fixture_runs_document_party_request_handoff_candidate_only():
     assert result.canonical_persistence_allowed is False
     assert result.execution_contract.mode == "OFFLINE_FIXTURE_TEST"
     assert result.execution_contract.unresolved_profile_override is True
+
+    party = result.party_candidates[0]
+    assert party.index_id == "PARTY"
+    assert party.status == "CANDIDATE_ONLY"
+    assert party.canonical_persistence_allowed is False
+    assert party.stable_id_issued is False
+    assert party.provenance["source_document_id"] == "DOC-001"
+    assert result.party_resolution_request["contract_id"] == "DOCUMENT_PARTY_RESOLUTION_REQUEST_V1"
+    assert result.party_resolution_request["context"]["internal_case_id"] == "CASE-001"
+
+    request = result.request_candidates[0]
+    assert request.index_id == "REQUEST"
+    assert request.status == "CANDIDATE_ONLY"
+    assert request.canonical_persistence_allowed is False
+    assert request.stable_id_issued is False
+    assert request.payload["case_id"] == "CASE-001"
+    assert request.payload["matter_id"] == "MATTER-001"
+    assert request.provenance["source_location"] == "PAGE:1"
+    assert request.provenance["source_quote"]
+
     assert any(
         event.get("event") == "SANDBOX_BLOCKER_OVERRIDE"
         and event.get("production_eligible") is False
         for event in result.audit_trace
     )
+    assert sum(
+        1 for event in result.audit_trace if event.get("event") == "CROSS_INDEX_HANDOFF_VALIDATED"
+    ) == 2
 
 
 def test_invalid_fixture_is_rejected_by_real_document_runtime_schema():
