@@ -1,0 +1,32 @@
+{
+  "patch_id": "DEFENSE_RUNTIME_ACTIVATION_PATCH_V1",
+  "target_package_version": "1.3.0",
+  "target_package_sha256": "6cb68fa2e5f62d12230c3e7096f02cb43e321ac0522b1c37ab574991cdd6117f",
+  "phase1_baseline_projection_sha256": "86a0fd5861ca16d095745d5402a6086a8f5f7c885d32914340b55b3e53271524",
+  "matcher_version": "DEFENSE_DICTIONARY_RULE_MATCHER_V1",
+  "sandbox_runtime_enabled": true,
+  "production_activation_allowed": false,
+  "current_submission_document_types": [
+    "DEFENSE_MEMORANDUM",
+    "FINAL_SUBMISSIONS_MEMORANDUM"
+  ],
+  "historical_only_document_types": [
+    "COURT_JUDGMENT",
+    "CASSATION_COURT_DECISION",
+    "OTHER_DOCUMENT"
+  ],
+  "guards": [
+    "NO_NEW_DEFENSE_TYPE_IDS",
+    "NO_NAME_ONLY_PARTY_MERGE",
+    "SOURCE_DOCUMENT_ID_REQUIRED",
+    "SOURCE_QUOTE_REQUIRED",
+    "QUOTED_OR_HISTORICAL_DEFENSE_NOT_PROMOTED_TO_CURRENT_DEFENSE",
+    "COUNTERPARTY_REJECTION_NOT_PROMOTED_TO_CURRENT_DEFENSE",
+    "NO_STABLE_DEFENSE_ID",
+    "NO_AUTOMATIC_COURT_DISPOSITION_INFERENCE",
+    "NO_AUTOMATIC_LEGAL_EFFECT",
+    "CURRENT_LAW_VALIDITY_RECHECK_WHERE_FLAGGED"
+  ],
+  "activation_scope": "SANDBOX_CANDIDATE_ONLY",
+  "notes": "Separate compatible-additive activation patch. It does not mutate the uploaded DEFENSE v1.3.0 package or the frozen DOCUMENT/PARTY/REQUEST Phase-1 baseline."
+}
