@@ -45,6 +45,16 @@ from .defense import (
     DefenseShadowObservation,
     DefenseShadowEngine,
 )
+from .defense_runtime import (
+    DefenseRuntimeActivationError,
+    DefenseActivationPatch,
+    DefenseRawMatch,
+    DefenseLifecycleRelationCandidate,
+    DefenseRawTextMatcher,
+    DefenseSandboxRuntime,
+    normalize_arabic_text,
+    stable_defense_projection_sha256,
+)
 
 __all__ = [
     "GovernanceRuntime",
@@ -91,4 +101,12 @@ __all__ = [
     "DefenseShadowCandidate",
     "DefenseShadowObservation",
     "DefenseShadowEngine",
+    "DefenseRuntimeActivationError",
+    "DefenseActivationPatch",
+    "DefenseRawMatch",
+    "DefenseLifecycleRelationCandidate",
+    "DefenseRawTextMatcher",
+    "DefenseSandboxRuntime",
+    "normalize_arabic_text",
+    "stable_defense_projection_sha256",
 ]
