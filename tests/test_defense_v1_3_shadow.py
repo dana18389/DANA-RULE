@@ -56,14 +56,14 @@ def test_reclassified_non_defense_is_not_promoted_to_defense_candidate():
     loaded = load_defense()
     decision = loaded.registry.route("DEF_EVD_PRODUCE_ORIGINAL_REQUEST")
     assert decision.route_kind == "RECLASSIFY_OUT_OF_DEFENSE"
-    assert decision.effective_record_class == "REQUEST"
+    assert decision.target == ("REQUEST/EVIDENCE_PRODUCTION",)
 
 
 def test_counter_defense_compatibility_record_does_not_become_canonical_defense():
     loaded = load_defense()
     decision = loaded.registry.route("DEF_PRO_PROCEDURAL_DEFECT_CURED")
     assert decision.route_kind == "RECLASSIFY_OUT_OF_DEFENSE"
-    assert decision.effective_record_class == "COUNTER_DEFENSE"
+    assert decision.target == "COUNTER_DEFENSE to procedural nullity"
 
 
 def test_shadow_candidate_never_issues_stable_id_or_legal_effect():
