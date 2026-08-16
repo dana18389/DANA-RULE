@@ -1,0 +1,55 @@
+{
+  "candidate_id": "DEADLINE_ENGINE_RUNTIME_CANDIDATE_V1",
+  "status": "SANDBOX_FAIL_CLOSED_RUNTIME_IMPLEMENTED_LOCAL_VERIFIED_NOT_FROZEN",
+  "freeze_status": "NOT_FROZEN",
+  "base_sha": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+  "source": {
+    "package_version": "1.1.0-legal-rebuild-candidate.2026-08-16",
+    "package_sha256": "46dd7c9ba5b2c28f25641f72ca8d86b9fc919ab69a1dd6f3014f401830cdd09c",
+    "report_sha256": "c2de4091c3706f7c05884ef5efe986199a6fd8188b35576523549312f5789f72"
+  },
+  "verified_inventory": {
+    "deadline_families": 14,
+    "deadline_types": 136,
+    "deadline_rules": 270,
+    "trigger_event_types": 38,
+    "relationship_types": 43,
+    "test_blueprints": 5400,
+    "modifier_only_rules": 7,
+    "backward_or_window_rules": 14
+  },
+  "sandbox_guards": {
+    "all_270_source_rules_remain_blocked": true,
+    "deadline_instances_emitted": false,
+    "calculation_runs_emitted": false,
+    "candidate_handoffs_only": true,
+    "d30_zero_primary": true,
+    "tenant_case_scope_isolation": true,
+    "automatic_final_legal_effect": false
+  },
+  "source_declared_test_state": {
+    "static_contract": "5400_OF_5400_PASS",
+    "fail_closed_simulation": "5400_OF_5400_PASS",
+    "deterministic_policy_unit_tests": "21_OF_21_PASS",
+    "real_legal_rule_runtime": "0_EXECUTED_NOT_RUN_REQUIRED_EXTERNAL_DEPENDENCIES_UNAVAILABLE"
+  },
+  "freeze_blockers": [
+    "ALL_270_LAW_NODE_IDS_REQUIRE_EXACT_NEO4J_RESOLUTION",
+    "ALL_270_ARTICLE_NODE_IDS_REQUIRE_EXACT_NEO4J_RESOLUTION",
+    "LEGAL_VERSION_LIFECYCLE_AND_EFFECTIVE_DATE_RESOLUTION_REQUIRED",
+    "VERSIONED_REVIEWED_SYRIAN_JUDICIAL_CALENDAR_REQUIRED",
+    "GENERAL_CALCULATION_POLICY_SOURCE_BINDINGS_REQUIRED",
+    "ALTERNATIVE_TRIGGER_AND_SPECIAL_RULE_PRECEDENCE_RESOLUTION_REQUIRED",
+    "REAL_5400_FIXTURE_EXECUTION_AND_LEGAL_GOLDEN_CASES_REQUIRED",
+    "FINAL_HUMAN_SYRIAN_LEGAL_SIGNOFF_PENDING"
+  ],
+  "github_ci": "NOT_RUN_NO_WORKFLOW",
+  "local_verification": {
+    "pytest": "PASS_10_OF_10",
+    "all_270_fail_closed_runtime_handoffs": "PASS",
+    "candidate_count": 270,
+    "deadline_instance_count": 0,
+    "calculation_run_count": 0,
+    "fail_closed_projection_sha256": "6ed16ca6c92c06e59e80c481b2020154a6ca5d79607ec4f9782d5e7a30b33883"
+  }
+}
