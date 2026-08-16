@@ -51,9 +51,9 @@
     "document_count": 30,
     "fixture_sha256": "e8d96714d7b5b19a03393f971df4ae5f59d20beee622c6cd505815ffa0786444",
     "fixture_decompressed_sha256": "9ea186b9ed6736e995db17670a9d8be9005ec23dc5da1576e85d43a28a01c220",
-    "projection_sha256": "9d507c46868b24a82517eaf4a827ccdc3c567ae2a1e5b15aadf731c7e0d7d1e8",
+    "projection_sha256": "4f7a9e496d8f9975a7a70cb30cc8bf27baf02f96feba9496a94e1ef647387040",
     "candidate_counts": {"Notification": 3,"NotificationOrder": 1,"ServiceAttempt": 2,"ServiceEvent": 1,"ProofOfService": 1,"ServiceChallenge": 1,"TOTAL": 9},
-    "relation_candidate_count": 4,
+    "relation_candidate_count": 2,
     "semantic_signal_count": 5
   },
   "checks": {
