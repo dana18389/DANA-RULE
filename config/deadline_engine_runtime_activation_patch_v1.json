@@ -1,0 +1,20 @@
+{
+  "patch_id": "DEADLINE_ENGINE_SANDBOX_INTEGRATION_PATCH_V1",
+  "target_package_version": "1.1.0-legal-rebuild-candidate.2026-08-16",
+  "target_package_sha256": "46dd7c9ba5b2c28f25641f72ca8d86b9fc919ab69a1dd6f3014f401830cdd09c",
+  "target_report_sha256": "c2de4091c3706f7c05884ef5efe986199a6fd8188b35576523549312f5789f72",
+  "source_package_sha256": "f2055b759f0f94cf802347700ca606ba89e0f622ca50896b19e0140f61e1279f",
+  "uploaded_rar_sha256": "0154d5e1f53be559e799360dca1b4de2386c458a5232375c6658b338823ee494",
+  "base_frozen_chain_head_sha": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+  "integration_mode": "COMPATIBLE_ADDITIVE_FAIL_CLOSED",
+  "sandbox_import_allowed": true,
+  "candidate_handoff_allowed": true,
+  "legal_rule_calculation_execution_allowed": false,
+  "deadline_instance_creation_allowed": false,
+  "canonical_persistence_allowed": false,
+  "production_activation_allowed": false,
+  "final_legal_effect_automation_allowed": false,
+  "llm_in_calculation_path_allowed": false,
+  "expected_current_rule_state": "270_BLOCKED_0_PRODUCTION_ELIGIBLE",
+  "freeze_allowed": false
+}
