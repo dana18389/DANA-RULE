@@ -1,0 +1,16 @@
+{
+  "activation_id": "LEGAL_ISSUE_SANDBOX_RUNTIME_ACTIVATION_PATCH_V1",
+  "status": "SANDBOX_RUNTIME_ENABLED_CANDIDATE_ONLY_NOT_FROZEN",
+  "source_package_sha256": "4bcb71d529a0bca3d02913ee4c019bf289ef69d010fc7fc9dc43cf6834c5d0a1",
+  "source_report_sha256": "7fa46449815e9c9a3c2bc68ba4a0b0a33ab413c2ac2cc7969fad2b8dbdba4af5",
+  "upstream_legal_reference_role_branch_head": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+  "upstream_legal_reference_role_source_sha256": "bd1f40720fe9ceed7b366a652b7f5d0a77027cfe2dd0706760ff00a343f67a8e",
+  "upstream_decision_position_source_sha256": "5d90752084196a1e8dbac904d1b5ec9d5806a9cbb7e5b13b0343df67cfabcf06",
+  "production_activation_allowed": false,
+  "canonical_persistence_allowed": false,
+  "automatic_canonical_issue_verification_allowed": false,
+  "automatic_court_treatment_finalization_allowed": false,
+  "automatic_legal_reference_resolution_allowed": false,
+  "freeze_allowed": false,
+  "freeze_blocker": "SOURCE_35_RUNTIME_FIXTURES_NOT_SUPPLIED_AND_REAL_LABELED_SYRIAN_CORPUS_PENDING"
+}
