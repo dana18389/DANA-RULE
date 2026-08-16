@@ -1,0 +1,62 @@
+{
+  "baseline_id": "LEGAL_REFERENCE_ROLE_RUNTIME_BASELINE_V1",
+  "status": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+  "source_package_version": "1.1.0-legal-rebuild-candidate.2026-08-15",
+  "source_status_preserved": "PRODUCTION_CANDIDATE_NOT_FROZEN",
+  "source_package_sha256": "bd1f40720fe9ceed7b366a652b7f5d0a77027cfe2dd0706760ff00a343f67a8e",
+  "source_report_sha256": "99b507cf097afff3a27deefd436fbd1fbb14561d1b0013731243f537049f77ae",
+  "activation_patch_sha256": "cc61f024ff302a1d7c03930e62151965630467509a97dad5e2aca56f987afb6c",
+  "upstream_decision_position_projection_sha256": "d720d0eacaefb0063acbbc0f94bdc3f0748dd027bc8ce2d521a679ee5a246eee",
+  "runtime_mode": "SANDBOX_RUNTIME_ENABLED_CANDIDATE_ONLY_NO_CYPHER",
+  "production_activation_eligible": false,
+  "canonical_persistence_allowed": false,
+  "automatic_role_assignment_allowed": false,
+  "cypher_generation_allowed": false,
+  "static_registry": {
+    "role_family_count": 19,
+    "role_type_count": 279,
+    "dictionary_entry_count": 279,
+    "query_intent_count": 41,
+    "relationship_type_count": 47,
+    "mandatory_scenario_spec_count": 25,
+    "generated_cypher_count": 0,
+    "new_canonical_role_ids": 0
+  },
+  "checks": {
+    "source_file_sha_verified": "PASS",
+    "report_file_sha_verified": "PASS",
+    "taxonomy_dictionary_parity": "PASS",
+    "mandatory_scenarios_25_executed": "PASS",
+    "candidate_is_not_resolution": "PASS",
+    "resolution_is_not_role_assignment": "PASS",
+    "party_citation_not_court_application": "PASS",
+    "historical_version_resolution_required": "PASS",
+    "general_special_exception_search_separated": "PASS",
+    "public_graph_read_only": "PASS",
+    "private_case_not_written_to_public_graph": "PASS",
+    "no_cypher_without_real_schema": "PASS",
+    "same_input_rerun_determinism": "PASS",
+    "local_pytest": "PASS_9_OF_9",
+    "github_ci": "NOT_RUN_NO_WORKFLOW",
+    "batch_composite_case_scope_entity_key": "PASS",
+    "tenant_case_isolation_same_entity_id": "PASS"
+  },
+  "source_runtime_state_preserved": {
+    "neo4j_runtime": "NOT_RUN_NEO4J_SCHEMA_AND_RUNTIME_UNAVAILABLE",
+    "production_activation": "BLOCKED"
+  },
+  "unresolved_blockers": [
+    "ACTUAL_NEO4J_SCHEMA_SNAPSHOT_MISSING",
+    "PER_TYPE_CROSS_DICTIONARY_MAPPINGS_MISSING",
+    "REAL_NEO4J_RUNTIME_EXPLAIN_SECURITY_PERFORMANCE_NOT_RUN",
+    "FINAL_HUMAN_SYRIAN_LEGAL_SIGNOFF_PENDING"
+  ],
+  "validation_boundary": [
+    "The uploaded V1.1 source remains immutable and source-declared PRODUCTION_CANDIDATE_NOT_FROZEN.",
+    "The sandbox runtime emits legal-reference needs and query-intent/query-packet candidates only.",
+    "No Cypher is generated until a real Neo4j schema snapshot is bound.",
+    "Retrieved candidates are not resolved references; resolution is not role assignment; role assignment is not verified legal link.",
+    "Party citation is not court application; source authority is not applicability; current text is not historical applicable version.",
+    "All public graph interactions remain read-only and private case data remains outside the public graph."
+  ]
+}
