@@ -1,0 +1,17 @@
+{
+  "patch_id": "PROCEDURE_HEARING_RUNTIME_ACTIVATION_PATCH_V1",
+  "target_delivery_zip_sha256": "139cc534885921563b6d525f37f9727b0abfeb1f54d803c0686d84d5c99cf048",
+  "target_package_sha256": "10933df0de4009f0c0106ba14f325ac6ddabdc17f1780bae597e87c263f15189",
+  "target_baseline_sha256": "2541dd4920f3ee1efd91d60a6a1d5b4f9cc4f4eb662464a85d5b363926893ff6",
+  "target_validation_sha256": "eac4f44509a07fed35dc195f882e60fd33e3ceb41622ab81994236117475f23a",
+  "target_cross_index_specs_sha256": "94b1ebf08a77956179f0f8f5dc0c8c801a015d0ed657bda075a57d6acebd4ace",
+  "upstream_asset_amount_projection_sha256": "760cdedaf79b928daf1b9954f0df6c8f7701ca7465e188311edb6cafaa10c00b",
+  "matcher_version": "PROCEDURE_HEARING_GOVERNED_RULE_MATCHER_V1",
+  "sandbox_runtime_enabled": true,
+  "production_activation_allowed": false,
+  "canonical_persistence_allowed": false,
+  "automatic_legal_effect_allowed": false,
+  "legal_deadline_calculation_allowed": false,
+  "automatic_notification_validity_allowed": false,
+  "automatic_jurisdiction_effect_allowed": false
+}
