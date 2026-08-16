@@ -1,0 +1,125 @@
+{
+  "handoff_id": "QANUN_AI_CASE_INTELLIGENCE_HANDOFF_GOVERNANCE_TO_TASK_2026-08-16",
+  "generated_at": "2026-08-16T14:03:00+03:00",
+  "repository": "dana18389/DANA-RULE",
+  "checkpoint_phase": "A_INTEGRATION_CHECKPOINT",
+  "checkpoint_result": "PASS_WITH_OPEN_FREEZE_BLOCKERS",
+  "global_freeze_performed": false,
+  "anchors": {
+    "frozen_chain_head": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+    "working_composite_through_task_alert": "440447dfc836a812d73d6ff132c1945619ea0ea3",
+    "checkpoint_branch": "agent/integration-checkpoint-a-governance-to-task-v1",
+    "github_ci": "NOT_RUN_NO_WORKFLOW"
+  },
+  "git_compare": {
+    "base": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+    "head": "440447dfc836a812d73d6ff132c1945619ea0ea3",
+    "status": "ahead",
+    "ahead_by": 15,
+    "behind_by": 0,
+    "merge_base": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+    "post_frozen_head_change_mode": "ADDITIONS_ONLY"
+  },
+  "governance": {
+    "version": "1.1",
+    "production_activation_allowed": false,
+    "source_packages_immutable": true,
+    "mode": "COMPATIBLE_ADDITIVE_IMMUTABLE_BASELINES"
+  },
+  "golden_case": {
+    "case_id": "CASE-SY-DAM-REALTY-2022-000731",
+    "documents": 30,
+    "fixture_sha256_compressed": "e8d96714d7b5b19a03393f971df4ae5f59d20beee622c6cd505815ffa0786444",
+    "fixture_sha256_decompressed": "9ea186b9ed6736e995db17670a9d8be9005ec23dc5da1576e85d43a28a01c220",
+    "D24_D28_scope": "CASE-SY-DAM-REALTY-2022-000731::JUDICIAL_LIABILITY",
+    "D30_rule": "DERIVED_SECONDARY_ZERO_PRIMARY"
+  },
+  "dependency_binding_summary": {"pass": 16, "fail": 0},
+  "dependency_binding_checks": [
+    "PHASE1→DEFENSE",
+    "PHASE1→FACT_EVENT",
+    "DEFENSE→FACT_EVENT",
+    "PHASE1→EVIDENCE_V1",
+    "DEFENSE→EVIDENCE_V1",
+    "FACT_EVENT→EVIDENCE_V1",
+    "EVIDENCE_V1→STATEMENT_ADMISSION",
+    "STATEMENT_ADMISSION→ASSET_AMOUNT",
+    "ASSET_AMOUNT→PROCEDURE_HEARING",
+    "PROCEDURE_HEARING→NOTIFICATION",
+    "NOTIFICATION→DECISION_POSITION",
+    "DECISION_POSITION→LEGAL_REFERENCE_ROLE",
+    "LEGAL_REFERENCE_ROLE→LEGAL_ISSUE",
+    "LEGAL_REFERENCE_ROLE→DEADLINE_ENGINE_BASE",
+    "LEGAL_ISSUE→TASK_ALERT",
+    "DEADLINE_ENGINE→TASK_ALERT"
+  ],
+  "indexes": {
+    "DOCUMENT": "FROZEN",
+    "PARTY": "FROZEN",
+    "REQUEST": "FROZEN",
+    "DEFENSE": "FROZEN_SANDBOX_RUNTIME_BASELINE",
+    "FACT_EVENT": "FROZEN_SANDBOX_RUNTIME_BASELINE",
+    "EVIDENCE_V1": "FROZEN_SANDBOX_RUNTIME_BASELINE",
+    "EVIDENCE_V2": "ADDITIVE_HARDENING_IMPLEMENTED_NOT_FROZEN",
+    "STATEMENT_ADMISSION": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+    "ASSET_AMOUNT": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+    "PROCEDURE_HEARING": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+    "NOTIFICATION": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+    "DECISION_POSITION": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+    "LEGAL_REFERENCE_ROLE": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+    "LEGAL_ISSUE": "SANDBOX_RUNTIME_IMPLEMENTED_LOCAL_VERIFIED_NOT_FROZEN",
+    "DEADLINE_ENGINE": "SANDBOX_FAIL_CLOSED_RUNTIME_IMPLEMENTED_LOCAL_VERIFIED_NOT_FROZEN",
+    "TASK_ALERT": "SANDBOX_INTEGRATION_CANDIDATE_LOCAL_VERIFIED_NOT_FROZEN"
+  },
+  "deadline_engine": {
+    "source_sha256": "46dd7c9ba5b2c28f25641f72ca8d86b9fc919ab69a1dd6f3014f401830cdd09c",
+    "rules": 270,
+    "test_blueprints": 5400,
+    "fail_closed_candidate_handoffs": 270,
+    "deadline_instances": 0,
+    "calculation_runs": 0,
+    "local_pytest": "PASS_10_OF_10"
+  },
+  "task_alert": {
+    "source_sha256": "12d4614384db59e185df0d5c84b6d3eff130bdf2463cc27750a49f8a443cb40f",
+    "task_types": 86,
+    "alert_types": 76,
+    "generation_rules": 167,
+    "mandatory_scenarios": 52,
+    "local_pytest": "PASS_13_OF_13",
+    "target_backend": "NOT_RUN",
+    "scheduler": "NOT_RUN",
+    "delivery": "NOT_RUN",
+    "rbac": "NOT_RUN"
+  },
+  "open_findings": [
+    "EVIDENCE_V2_NOT_FROZEN",
+    "LEGAL_ISSUE_NOT_FROZEN",
+    "DEADLINE_ENGINE_NOT_FROZEN",
+    "TASK_ALERT_NOT_FROZEN",
+    "TA-COMPAT-001",
+    "TA-COMPAT-002",
+    "CHECKPOINT-DOC-001",
+    "CHECKPOINT-COVERAGE-001_DEFENSE_D30_EXPLICIT_REGRESSION_MISSING"
+  ],
+  "global_production_blockers": [
+    "GITHUB_CI_NOT_CONFIGURED",
+    "ACTUAL_NEO4J_SCHEMA_SNAPSHOT_MISSING",
+    "CANONICAL_NEO4J_LEGAL_SOURCE_IDS_UNRESOLVED",
+    "COURT_CHAMBER_HISTORICAL_REGISTRY_UNRESOLVED",
+    "PER_PRODUCTION_TYPE_CROSS_DICTIONARY_MAPPINGS_MISSING",
+    "REAL_LABELED_SYRIAN_CORPUS_REGRESSION_PENDING",
+    "LIVE_LLM_SCHEMA_BINDING_NOT_RUN",
+    "TARGET_ENTITY_RESOLUTION_REQUIRED",
+    "STABLE_INSTANCE_ID_SERVICE_MISSING",
+    "CANONICAL_RELATION_PERSISTENCE_MISSING",
+    "REAL_NEO4J_EXPLAIN_SECURITY_PERFORMANCE_NOT_RUN",
+    "FINAL_HUMAN_SYRIAN_LEGAL_SIGNOFF_PENDING"
+  ],
+  "next_phase": {
+    "priority": "P0",
+    "order": ["CASE_PROCEEDING_CORE", "REMEDY_APPEAL", "ENFORCEMENT_PROCEEDING"],
+    "then": "FULL_END_TO_END_CLOSURE_AND_FREEZE_ELIGIBILITY_REASSESSMENT",
+    "P1_after_core": ["CASE_ACTOR", "CRIMINAL_CHARGE"]
+  }
+}
