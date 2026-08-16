@@ -1,0 +1,20 @@
+{
+  "patch_id": "DECISION_POSITION_RUNTIME_ACTIVATION_PATCH_V1",
+  "target_package_version": "QANUN-DP-SY-1.2.0-LEGAL-REBUILD-CANDIDATE.2026-08-15",
+  "target_package_sha256": "5d90752084196a1e8dbac904d1b5ec9d5806a9cbb7e5b13b0343df67cfabcf06",
+  "target_report_sha256": "c45d6ef0f36a4f33f91f80a53f45dacfabcc09f245876ffb5a9e97dc1610af66",
+  "matcher_version": "DECISION_POSITION_GOVERNED_RULE_MATCHER_V1",
+  "upstream_notification_projection_sha256": "4f7a9e496d8f9975a7a70cb30cc8bf27baf02f96feba9496a94e1ef647387040",
+  "sandbox_runtime_enabled": true,
+  "production_activation_allowed": false,
+  "canonical_persistence_allowed": false,
+  "automatic_legal_effect_allowed": false,
+  "component_content_sha256": {
+    "taxonomy": "94eb108056c8758349b2f5d592e07cacf45d1de48beb5f6c0df1d3dc11bf6c6a",
+    "dictionary": "381cf101a335b7da613663619d7b25dbea2e722452d1c941a193fde5ad78f9a1",
+    "relations": "6b619ea93c66d50e565e808f696f6db5b3178205b6afefb50039ae809fdd8146",
+    "backend_contract": "83a71eed26f6f29b6595807d514905db457a444953e9bf493068b556c96c4294",
+    "validation": "8743d9df102858a262a5399ff579e6eda5104ef667395dc3336a64cc4f3b19b1",
+    "original_manifest": "4c57f481af87a063b824b878348828877225334b86104734f8b8d9a6c1a05af9"
+  }
+}
