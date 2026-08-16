@@ -1,0 +1,27 @@
+{
+  "activation_id": "TASK_ALERT_SANDBOX_RUNTIME_ACTIVATION_PATCH_V1",
+  "status": "SANDBOX_INTEGRATION_CANDIDATE_ONLY_NOT_FROZEN",
+  "source_package_version": "CASE_TASK_ALERT_BACKEND_PACKAGE_V1.2.0-LEGAL-REBUILD-CANDIDATE",
+  "source_package_sha256": "12d4614384db59e185df0d5c84b6d3eff130bdf2463cc27750a49f8a443cb40f",
+  "source_report_sha256": "3a0cb16c2ca73362fefa59dc38e66802228d8b5db4600cffda1348fb85db480d",
+  "integration_parents": {
+    "legal_issue_working_head": "dca63e7141d929c987788e10abc7932e103428b8",
+    "deadline_engine_working_head": "4f8318e6f7508f4aaeb4e2bb5e725b0f97db3124"
+  },
+  "sandbox_candidate_evaluation_allowed": true,
+  "active_task_creation_allowed": false,
+  "active_alert_creation_allowed": false,
+  "reminder_scheduler_execution_allowed": false,
+  "external_delivery_allowed": false,
+  "queue_event_bus_execution_allowed": false,
+  "rbac_authorization_runtime_claimed": false,
+  "organization_policy_runtime_claimed": false,
+  "deadline_local_calculation_allowed": false,
+  "deadline_final_legal_effect_inference_allowed": false,
+  "legal_compliance_auto_verification_allowed": false,
+  "legal_issue_derived_rules_allowed": false,
+  "legal_issue_derived_rules_blocker": "UPSTREAM_VERSION_BINDING_MISMATCH",
+  "canonical_persistence_allowed": false,
+  "production_activation_allowed": false,
+  "freeze_allowed": false
+}
