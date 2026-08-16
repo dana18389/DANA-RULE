@@ -7,7 +7,7 @@ from qanun_case_runtime.statement_admission_runtime import StatementAdmissionAct
 from qanun_case_runtime.statement_admission_batch import StatementBatchDocument, StatementBatchOrchestrator
 
 ROOT=Path(__file__).resolve().parent.parent
-PATCH=ROOT/'config/statement_admission_runtime_activation_patch_v1.json'
+PATCH=ROOT/'config/statement_admission_runtime_activation_patch_v1.json.gz'
 FIX=ROOT/'tests/fixtures/statement_golden_case_d01_d30.json.gz'
 ZIP_ENV='QANUN_STATEMENT_ADMISSION_DELIVERY_ZIP'
 GOLDEN='b88eb1a62e6ded8aad57bc78c614655b296bdc8caa56f36f2d18fe21ac3a9b11'
@@ -19,7 +19,7 @@ def runtime():
     p=os.environ.get(ZIP_ENV)
     if not p: pytest.skip(f'set {ZIP_ENV}')
     loaded=StatementAdmissionPackageLoader(GovernanceRuntime(False)).load(p)
-    patch=StatementAdmissionActivationPatch.from_mapping(json.loads(PATCH.read_text(encoding='utf-8')))
+    patch=StatementAdmissionActivationPatch.from_mapping(json.loads(gzip.decompress(PATCH.read_bytes())))
     return loaded, StatementAdmissionSandboxRuntime(loaded=loaded,patch=patch)
 
 def docs():
