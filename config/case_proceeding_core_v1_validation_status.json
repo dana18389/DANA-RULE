@@ -1,0 +1,37 @@
+{
+  "candidate_id": "CASE_PROCEEDING_CORE_V1",
+  "status": "BLOCKED_PENDING_REQUIRED_SOURCES",
+  "frozen_base_head": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+  "working_context_head": "440447dfc836a812d73d6ff132c1945619ea0ea3",
+  "branch": "agent/case-proceeding-core-runtime-v1",
+  "governance": {
+    "compatible_additive": true,
+    "baseline_files_modified": 0,
+    "baseline_files_deleted": 0,
+    "production_activation": false,
+    "sandbox_freeze_allowed": false,
+    "llm_stable_instance_ids": false,
+    "canonical_relation_persistence": false,
+    "automatic_legal_effects": false
+  },
+  "local_runtime_validation": {
+    "pytest": "PASS_12_OF_12",
+    "scope": "DETERMINISTIC_FAIL_CLOSED_CANDIDATE_RUNTIME_ONLY"
+  },
+  "legal_source_validation": {
+    "official_syrian_sources_retrieved_in_this_run": 0,
+    "source_backed_proceeding_types": 0,
+    "invented_legal_type_ids": 0,
+    "verdict": "BLOCKED_PENDING_REQUIRED_SOURCES"
+  },
+  "source_dependencies_required": [
+    "CURRENT_SYRIAN_CIVIL_PROCEDURE_OFFICIAL_TEXT_AND_AMENDMENTS",
+    "CURRENT_SYRIAN_CRIMINAL_PROCEDURE_OFFICIAL_TEXT_AND_AMENDMENTS",
+    "CURRENT_SYRIAN_JUDICIAL_AUTHORITY_LAW_PLUS_COURT_CHAMBER_REGISTRY_DECISIONS",
+    "CURRENT_SYRIAN_STATE_COUNCIL_PROCEDURAL_LAW_AND_AMENDMENTS",
+    "CURRENT_SYRIAN_JUDICIAL_ENFORCEMENT_RULES_AND_AMENDMENTS",
+    "CURRENT_SYRIAN_PERSONAL_STATUS_SHARIA_PROCEDURAL_SOURCES",
+    "CURRENT_SYRIAN_ARBITRATION_JUDICIAL_INTERFACE_SOURCES"
+  ],
+  "github_ci": "NOT_RUN_NO_WORKFLOW"
+}
