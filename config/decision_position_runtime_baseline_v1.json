@@ -1,0 +1,130 @@
+{
+  "baseline_id": "DECISION_POSITION_RUNTIME_BASELINE_V1",
+  "status": "FROZEN_SANDBOX_BASELINE_LOCAL_VERIFIED",
+  "source_data_class": "DATA_TEST_SYNTHETIC",
+  "source_package_version": "QANUN-DP-SY-1.2.0-LEGAL-REBUILD-CANDIDATE.2026-08-15",
+  "source_status_preserved": "PRODUCTION_CANDIDATE_NOT_FROZEN",
+  "source_package_sha256": "5d90752084196a1e8dbac904d1b5ec9d5806a9cbb7e5b13b0343df67cfabcf06",
+  "source_report_sha256": "c45d6ef0f36a4f33f91f80a53f45dacfabcc09f245876ffb5a9e97dc1610af66",
+  "source_component_sha256": {
+    "taxonomy": "94eb108056c8758349b2f5d592e07cacf45d1de48beb5f6c0df1d3dc11bf6c6a",
+    "dictionary": "381cf101a335b7da613663619d7b25dbea2e722452d1c941a193fde5ad78f9a1",
+    "relations": "6b619ea93c66d50e565e808f696f6db5b3178205b6afefb50039ae809fdd8146",
+    "backend_contract": "83a71eed26f6f29b6595807d514905db457a444953e9bf493068b556c96c4294",
+    "validation": "8743d9df102858a262a5399ff579e6eda5104ef667395dc3336a64cc4f3b19b1",
+    "original_manifest": "4c57f481af87a063b824b878348828877225334b86104734f8b8d9a6c1a05af9"
+  },
+  "activation_patch_sha256": "28347e5ccc36a7e444c4ed42da14ec87d9e692dbfe036e49f617bd4ef4a23cdf",
+  "upstream_notification_projection_sha256": "4f7a9e496d8f9975a7a70cb30cc8bf27baf02f96feba9496a94e1ef647387040",
+  "runtime_mode": "SANDBOX_RUNTIME_ENABLED_CANDIDATE_ONLY",
+  "production_activation_eligible": false,
+  "canonical_persistence_allowed": false,
+  "automatic_legal_effect_allowed": false,
+  "stable_instance_ids_issued": false,
+  "static_registry": {
+    "judicial_act_type_count": 32,
+    "decision_family_count": 12,
+    "decision_type_count": 202,
+    "court_position_type_count": 76,
+    "disposition_item_type_count": 28,
+    "legal_authority_use_type_count": 13,
+    "relationship_type_count": 104,
+    "dictionary_entry_count": 278,
+    "backend_record_model_count": 6,
+    "source_static_validation_checks": 37,
+    "source_static_validation_pass": 37,
+    "source_static_validation_fail": 0,
+    "new_canonical_stable_ids": 0
+  },
+  "golden_case": {
+    "case_id": "CASE-SY-DAM-REALTY-2022-000731",
+    "document_count": 30,
+    "fixture_sha256": "e8d96714d7b5b19a03393f971df4ae5f59d20beee622c6cd505815ffa0786444",
+    "fixture_decompressed_sha256": "9ea186b9ed6736e995db17670a9d8be9005ec23dc5da1576e85d43a28a01c220",
+    "projection_sha256": "d720d0eacaefb0063acbbc0f94bdc3f0748dd027bc8ce2d521a679ee5a246eee",
+    "candidate_counts": {
+      "JUDICIAL_DECISION_CANDIDATE": 24,
+      "DISPOSITION_ITEM_CANDIDATE": 22,
+      "COURT_POSITION_CANDIDATE": 19,
+      "REASONING_ITEM_CANDIDATE": 7,
+      "RELATION_CANDIDATE": 37
+    }
+  },
+  "checks": {
+    "package_file_sha_verified": "PASS",
+    "report_file_sha_verified": "PASS",
+    "embedded_component_hashes_verified": "PASS",
+    "source_static_validation_37_of_37": "PASS",
+    "dictionary_taxonomy_parity": "PASS",
+    "decision_document_separate_from_decision": "PASS",
+    "party_argument_not_court_position": "PASS",
+    "quoted_precedent_not_current_decision": "PASS",
+    "caption_not_judicial_act": "PASS",
+    "atomic_disposition_items": "PASS",
+    "multi_type_not_atomic_replacement": "PASS",
+    "evidence_mention_not_reliance": "PASS",
+    "evidence_reliance_not_all_facts_proved": "PASS",
+    "prior_court_reasoning_not_current_fact_finding": "PASS",
+    "appeal_semantics_separated": "PASS",
+    "cassation_no_synthetic_formal_acceptance": "PASS",
+    "finality_not_inferred_from_condition_or_time": "PASS",
+    "notification_not_inferred_from_pronouncement": "PASS",
+    "source_quote_literal_provenance": "PASS",
+    "source_page_not_invented_when_absent": "PASS",
+    "batch_composite_case_scope_document_key": "PASS",
+    "same_input_rerun_determinism": "PASS",
+    "local_pytest": "PASS_9_OF_9",
+    "github_ci": "NOT_RUN_NO_WORKFLOW"
+  },
+  "golden_semantic_highlights": {
+    "D06_annotation_order_count": 1,
+    "D12_expert_appointment_count": 1,
+    "D18_atomic_multi_item_output": true,
+    "D21_formal_acceptance_and_reversal_and_merits_rejection_separated": true,
+    "D23_cassation_merits_rejection_without_synthetic_formal_acceptance": true,
+    "D26_formal_admissibility_and_interim_stay_rejection_separated": true,
+    "D28_merits_rejection_item_scoped": true,
+    "D30_derived_summary_zero_primary_candidates": true
+  },
+  "source_runtime_state_preserved": {
+    "status": "PRODUCTION_CANDIDATE_NOT_FROZEN",
+    "runtime_validation_status": "NOT_RUN_RUNTIME_UNAVAILABLE",
+    "activation_status": "BLOCKED_PENDING_SANDBOX_RUNTIME_VALIDATION"
+  },
+  "open_governance_items": [
+    "CANONICAL_NEO4J_LEGAL_SOURCE_IDS_UNRESOLVED",
+    "COURT_CHAMBER_HISTORICAL_REGISTRY_UPSTREAM",
+    "SPECIAL_REVIEW_PATHS_SOURCE_SPECIFIC",
+    "PERSONAL_STATUS_REGIMES_SOURCE_SPECIFIC",
+    "LABELED_REAL_SYRIAN_CORPUS_REGRESSION_PENDING",
+    "LIVE_LLM_SCHEMA_BINDING_NOT_RUN"
+  ],
+  "activation_blockers": [
+    "GITHUB_CI_NOT_CONFIGURED",
+    "LIVE_LLM_SCHEMA_BINDING_NOT_RUN",
+    "CANONICAL_TARGET_ENTITY_RESOLUTION_REQUIRED",
+    "SOURCE_PAGE_REQUIRED_FOR_PRODUCTION_WHEN_AVAILABLE",
+    "CANONICAL_NEO4J_LEGAL_SOURCE_IDS_UNRESOLVED",
+    "COURT_CHAMBER_REGISTRY_UNRESOLVED",
+    "REAL_SYRIAN_LABELED_CORPUS_REGRESSION_PENDING",
+    "NO_STABLE_INSTANCE_ID_SERVICE",
+    "NO_CANONICAL_RELATION_PERSISTENCE"
+  ],
+  "validation_boundary": [
+    "The uploaded V1.2 source remains immutable and source-declared PRODUCTION_CANDIDATE_NOT_FROZEN.",
+    "The additive sandbox runtime emits only candidates; it does not persist canonical decisions, court positions, disposition items, or legal effects.",
+    "One judgment may yield multiple atomic disposition and court-position candidates; MULTI_* types never replace atomic extraction.",
+    "Party arguments, quoted precedents, recited facts, evidence mentions, and prior-court reasoning never become current court positions without explicit current-court adoption.",
+    "Finality, enforceability, res judicata, notification status, appeal deadlines, and public-graph publication remain external sourced assessments.",
+    "When the synthetic fixture has no page locator, source_page remains null with UNRESOLVED_SOURCE_PAGE rather than being invented.",
+    "The local Golden D01-D30 runtime is synthetic and does not replace labeled Syrian-corpus validation required by the source report."
+  ],
+  "artifact_sha256": {
+    "qanun_case_runtime/decision_position.py": "3b1f7e8fb575b81ff96c33b384a922e2d632c3de51c0c08b95ba8eb36cf9169f",
+    "qanun_case_runtime/decision_position_rules.py": "2dde7bec4cc0bb765ca2ab8bd0b46d6570969f7772bb8fcf500e618234e91cf2",
+    "qanun_case_runtime/decision_position_runtime.py": "6d5e16f1ccd8240bfe41075cb5f2ebc292ad33825d4825d9283285072a7d4e27",
+    "qanun_case_runtime/decision_position_batch.py": "522791dcf162c527293606cc9742d4221dec9c7525791b8e8ba59399cdc3b6fd",
+    "tests/test_decision_position_runtime_v1.py": "5061182a419bc9a98618b5cda3fdb37294d4425ac0b5e11965530037c1e7bcee",
+    "config/decision_position_runtime_activation_patch_v1.json": "28347e5ccc36a7e444c4ed42da14ec87d9e692dbfe036e49f617bd4ef4a23cdf"
+  }
+}
