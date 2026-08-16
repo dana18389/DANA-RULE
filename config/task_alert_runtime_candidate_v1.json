@@ -1,0 +1,72 @@
+{
+  "candidate_id": "TASK_ALERT_RUNTIME_CANDIDATE_V1",
+  "status": "SANDBOX_INTEGRATION_CANDIDATE_LOCAL_VERIFIED_NOT_FROZEN",
+  "freeze_status": "NOT_FROZEN",
+  "source": {
+    "package_version": "CASE_TASK_ALERT_BACKEND_PACKAGE_V1.2.0-LEGAL-REBUILD-CANDIDATE",
+    "engine_version": "CASE_TASK_ALERT_RULE_ENGINE_V1.2.0-LEGAL-REBUILD-CANDIDATE",
+    "package_sha256": "12d4614384db59e185df0d5c84b6d3eff130bdf2463cc27750a49f8a443cb40f",
+    "report_sha256": "3a0cb16c2ca73362fefa59dc38e66802228d8b5db4600cffda1348fb85db480d"
+  },
+  "integration_lineage": {
+    "legal_issue_parent_head": "dca63e7141d929c987788e10abc7932e103428b8",
+    "deadline_engine_parent_head": "4f8318e6f7508f4aaeb4e2bb5e725b0f97db3124",
+    "deadline_package_version": "1.1.0-legal-rebuild-candidate.2026-08-16",
+    "deadline_package_sha256": "46dd7c9ba5b2c28f25641f72ca8d86b9fc919ab69a1dd6f3014f401830cdd09c"
+  },
+  "verified_inventory": {
+    "task_families": 7,
+    "task_types": 86,
+    "alert_families": 8,
+    "alert_types": 76,
+    "generation_rules": 167,
+    "relations": 54,
+    "mandatory_scenarios": 52,
+    "cross_dictionary_trigger_records": 115
+  },
+  "source_declared_validation": {
+    "cross_cutting_static": "PASS_23_OF_23",
+    "scenario_contracts": "PASS_STRUCTURAL_52_OF_52",
+    "critical_semantic_simulations": "PASS_9_OF_9",
+    "runtime": "NOT_RUN_RUNTIME_UNAVAILABLE",
+    "production_activation": "BLOCKED"
+  },
+  "local_candidate_runtime_validation": {
+    "pytest": "PASS_13_OF_13",
+    "scope": "DETERMINISTIC_IN_PROCESS_CANDIDATE_RUNTIME_ONLY",
+    "target_backend_service": "NOT_RUN",
+    "queue_event_bus": "NOT_RUN",
+    "scheduler": "NOT_RUN",
+    "delivery": "NOT_RUN",
+    "rbac": "NOT_RUN",
+    "production_tenant_isolation": "NOT_RUN"
+  },
+  "guards": {
+    "candidate_only": true,
+    "active_task_creation": false,
+    "active_alert_creation": false,
+    "external_delivery": false,
+    "deadline_local_calculation": false,
+    "final_legal_effect_inference": false,
+    "task_completed_implies_legal_compliance": false,
+    "d30_zero_primary": true,
+    "tenant_case_scope_isolation": true,
+    "automatic_execution": false
+  },
+  "open_compatibility_findings": [
+    "TA-COMPAT-001_LEGACY_OPTIONAL_DEADLINE_GATE_METADATA_15_REFERENCES",
+    "TA-COMPAT-002_LEGAL_ISSUE_UPSTREAM_VERSION_BINDING_MISMATCH"
+  ],
+  "freeze_blockers": [
+    "RUN_52_SCENARIOS_IN_TARGET_BACKEND_AND_CI",
+    "REPLAY_IDEMPOTENCY_QUEUE_SCHEDULER_DELIVERY_TESTS_REQUIRED",
+    "RBAC_CHANNEL_QUIET_HOURS_ORGANIZATION_POLICIES_REQUIRED",
+    "PER_PRODUCTION_TYPE_UPSTREAM_MAPPING_REQUIRED",
+    "FINAL_PHYSICAL_NEO4J_RESOLVER_BINDING_REQUIRED",
+    "SYRIAN_GOLDEN_CASES_AND_HUMAN_LEGAL_REVIEW_REQUIRED",
+    "TA_COMPAT_001_REQUIRES_CANONICAL_METADATA_RECONCILIATION",
+    "TA_COMPAT_002_REQUIRES_LEGAL_ISSUE_VERSION_BINDING_RECONCILIATION"
+  ],
+  "github_ci": "TO_BE_VERIFIED",
+  "integration_closure": "STARTED_NOT_COMPLETE"
+}
