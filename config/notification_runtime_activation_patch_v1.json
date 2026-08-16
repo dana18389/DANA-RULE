@@ -1,0 +1,13 @@
+{
+  "automatic_legal_effect_allowed": false,
+  "canonical_persistence_allowed": false,
+  "matcher_version": "NOTIFICATION_GOVERNED_RULE_MATCHER_V1",
+  "patch_id": "NOTIFICATION_RUNTIME_ACTIVATION_PATCH_V1",
+  "production_activation_allowed": false,
+  "sandbox_runtime_enabled": true,
+  "target_baseline_sha256": "f18e1fb2880332e278309a53e593f057f81d2646ede09f7350dc90fa88ca6b2d",
+  "target_delivery_zip_sha256": "8a055084c9279bdbbd4910a5a415e2c74a588a6e2f56b8ee676763b3e94528f3",
+  "target_package_sha256": "f2eb9e96d771d16d41113972707bb68fb574f03478d6356efad4c69c57beb362",
+  "target_package_version": "1.1.0",
+  "upstream_procedure_hearing_projection_sha256": "b318be69b7cfcc5d9ee07112a3e25e1cdd6c9305dd16a89fab24035bbf2f3d18"
+}
