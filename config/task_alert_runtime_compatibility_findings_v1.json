@@ -1,0 +1,30 @@
+{
+  "finding_set_id": "TASK_ALERT_RUNTIME_COMPATIBILITY_FINDINGS_V1",
+  "source_package_sha256": "12d4614384db59e185df0d5c84b6d3eff130bdf2463cc27750a49f8a443cb40f",
+  "status": "OPEN_NON_DESTRUCTIVE_RUNTIME_GUARDS_APPLIED",
+  "findings": [
+    {
+      "finding_id": "TA-COMPAT-001",
+      "severity": "BLOCKING_FOR_FREEZE_NOT_BLOCKING_FOR_FAIL_CLOSED_SANDBOX",
+      "title": "Legacy optional Deadline calculation statuses remain in V1.2 metadata",
+      "reference_count": 15,
+      "affected_rule_ids": ["TAR-FACT-004", "TAR-DEF-002", "TAR-APP-002", "TAR-ENF-007", "TAR-EXAMPLE-001"],
+      "legacy_values": ["VERIFIED", "CANDIDATE", "AMBIGUOUS", "BLOCKED_MISSING_INPUT"],
+      "scope": "deadline_gate.allowed_calculation_statuses where deadline_gate.required=false",
+      "runtime_guard": "Reject non-canonical calculation status in any required Deadline gate; never use these optional legacy values to calculate or infer a legal deadline.",
+      "canonical_calculation_statuses": ["CALCULATED_PROVISIONAL", "BLOCKED_REQUIRES_REVIEW", "NOT_APPLICABLE", "FAILED_TECHNICAL"],
+      "canonical_package_modified": false
+    },
+    {
+      "finding_id": "TA-COMPAT-002",
+      "severity": "BLOCKING_FOR_LEGAL_ISSUE_DERIVED_RULES",
+      "title": "TASK_ALERT package Legal Issue dependency version does not match current repository working baseline",
+      "package_declared_legal_issue_version": "CASE_LEGAL_ISSUE_INDEX_V1.0.1-LEGAL-REBUILD.2026-08-15",
+      "repository_legal_issue_version": "1.1.0-legal-rebuild-candidate.2026-08-16",
+      "repository_legal_issue_package_sha256": "4bcb71d529a0bca3d02913ee4c019bf289ef69d010fc7fc9dc43cf6834c5d0a1",
+      "repository_legal_issue_head": "dca63e7141d929c987788e10abc7932e103428b8",
+      "runtime_guard": "Suppress all rules whose source_family is LEGAL_ISSUE_DERIVED until version binding is explicitly reconciled.",
+      "canonical_package_modified": false
+    }
+  ]
+}
