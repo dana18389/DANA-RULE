@@ -1,0 +1,29 @@
+{
+  "validation_id": "EVIDENCE_RUNTIME_HARDENING_V2_VALIDATION",
+  "base_evidence_semantic_commit": "663abeea565ffdd0bd4c5749f0afa593ac080e81",
+  "base_evidence_documentation_commit": "0f2812a226a472badda4f9e7d8a9aa947ededce5",
+  "source_evidence_delivery_sha256": "501fee41f1201d568b982de96c40b3700963eb17144b09bb6cf2577c57abfd89",
+  "source_evidence_package_sha256": "e73fd6f9b619a3daa7347f64df6c08a95dca1c793753a44044a02e4d66a4e906",
+  "frozen_v1_projection_sha256": "27bb93ccd73b10aa976dddbffc9a6bb62dae7da6dd62b36c9bee994280d8d0b6",
+  "patch_mode": "COMPATIBLE_ADDITIVE_NO_V1_MUTATION",
+  "production_activation": false,
+  "v1_frozen_baseline_mutated": false,
+  "source_package_mutated": false,
+  "findings": {
+    "P1_REFERENCE_ENTITY_KIND": "ADDRESSED_BY_RECORD_KIND_DERIVED_ENTITY_KIND",
+    "P1_FACT_EVENT_EVIDENCE_E2E": "REAL_RUNTIME_TEST_IMPLEMENTED_REQUIRES_EXTERNAL_SOURCE_PACKAGES_AT_EXECUTION",
+    "P1_GENERALIZED_OCCURRENCE_LINKING": "ADDRESSED_NO_BLIND_SAME_TYPE_MANY_TO_MANY",
+    "P1_FACT_TARGET_RESOLUTION": "ADDRESSED_STRICT_FACT_CANDIDATE_VALIDATION",
+    "P2_COMPOSITE_BATCH_KEY": "ADDRESSED_CASE_SCOPE_PLUS_DOCUMENT_ID",
+    "P2_DELIVERY_ZIP_ACTIVATION_BINDING": "ADDRESSED_SHA256_REQUIRED_AT_RUNTIME_ACTIVATION"
+  },
+  "local_algorithm_hardening_check": "PASS",
+  "github_changed_files_from_evidence_head": 4,
+  "github_v1_files_modified": 0,
+  "github_ci": "NOT_RUN_NO_WORKFLOW",
+  "repository_pytest": "NOT_RUN_IN_CURRENT_CONNECTOR_ENVIRONMENT",
+  "cross_index_e2e_execution": "NOT_RUN_TEST_IMPLEMENTED",
+  "freeze_v2_allowed": false,
+  "freeze_v2_blocker": "RUN_TEST_EVIDENCE_RUNTIME_V2_WITH_QANUN_EVIDENCE_DELIVERY_ZIP_AND_QANUN_FACT_EVENT_DELIVERY_ZIP",
+  "next_action": "EXECUTE_V2_PYTEST_AND_ONLY_THEN_CREATE_FROZEN_V2_BASELINE"
+}
