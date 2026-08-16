@@ -1,0 +1,17 @@
+{
+  "patch_id": "EVIDENCE_RUNTIME_HARDENING_PATCH_V2",
+  "target_package_version": "1.1.0",
+  "target_package_sha256": "e73fd6f9b619a3daa7347f64df6c08a95dca1c793753a44044a02e4d66a4e906",
+  "target_delivery_zip_sha256": "501fee41f1201d568b982de96c40b3700963eb17144b09bb6cf2577c57abfd89",
+  "base_activation_patch_sha256": "f4ae93fca98a76adf590fd5cd6261343a3b8f8a2ba74cffc4ca9b6eb2b600e2f",
+  "sandbox_runtime_enabled": true,
+  "production_activation_allowed": false,
+  "strict_reference_entity_kind": true,
+  "strict_fact_target_validation": true,
+  "generalized_occurrence_matching": true,
+  "composite_batch_identity": true,
+  "source_package_remains_immutable": true,
+  "frozen_baseline_v1_remains_immutable": true,
+  "legal_effect_policy": "NO_AUTOMATIC_LEGAL_EFFECT",
+  "persistence_policy": "CANDIDATE_ONLY_NO_CANONICAL_PERSISTENCE"
+}
