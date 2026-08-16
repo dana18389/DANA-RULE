@@ -1,0 +1,60 @@
+{
+  "baseline_id": "LEGAL_ISSUE_RUNTIME_BASELINE_V1",
+  "status": "SANDBOX_RUNTIME_IMPLEMENTED_LOCAL_VERIFIED_NOT_FROZEN",
+  "source_package_version": "1.1.0-legal-rebuild-candidate.2026-08-16",
+  "source_status_preserved": "PRODUCTION_CANDIDATE_NOT_FROZEN",
+  "source_package_sha256": "4bcb71d529a0bca3d02913ee4c019bf289ef69d010fc7fc9dc43cf6834c5d0a1",
+  "source_report_sha256": "7fa46449815e9c9a3c2bc68ba4a0b0a33ab413c2ac2cc7969fad2b8dbdba4af5",
+  "activation_patch_sha256": "e43dc8813002e2a40c35e7f42183fd451bd65960f62bf032f51cb921eacc152d",
+  "upstream_legal_reference_role_branch_head": "26f78e5595092dc2205e67ea67e373730e0c2eff",
+  "runtime_mode": "SANDBOX_RUNTIME_ENABLED_CANDIDATE_ONLY",
+  "production_activation_eligible": false,
+  "canonical_persistence_allowed": false,
+  "automatic_verification_allowed": false,
+  "static_registry": {
+    "issue_family_count": 28,
+    "issue_type_count": 409,
+    "dictionary_entry_count": 409,
+    "discovery_rule_count": 1333,
+    "normalized_relation_contract_count": 82,
+    "mandatory_test_spec_count": 35,
+    "legal_rebuild_regression_spec_count": 15,
+    "new_canonical_issue_ids": 0
+  },
+  "local_validation": {
+    "pytest": "PASS_9_OF_9",
+    "mandatory_scenario_contract_harness": "35_OF_35_EXECUTED_ON_SCENARIO_DESCRIPTIONS",
+    "source_runtime_fixture_execution": "NOT_RUN_SOURCE_FIXTURES_NOT_SUPPLIED",
+    "legal_rebuild_regression_catalog": "15_OF_15_PRESENT_AND_BOUNDARIES_GUARDED",
+    "golden_d01_d30": "PASS",
+    "golden_projection_sha256": "3e9918f0a54cebc2364cb55fea159a032859dd8b643d3a170fe7ef022f86a8b1",
+    "golden_counts": {
+      "issue_candidates": 70,
+      "court_treatment_candidates": 16,
+      "research_handoffs": 70
+    },
+    "d30_zero_primary": true,
+    "determinism": "PASS",
+    "batch_case_scope_isolation": "PASS"
+  },
+  "source_runtime_state_preserved": {
+    "backend_runtime": "NOT_RUN_RUNTIME_UNAVAILABLE",
+    "production_activation": "BLOCKED"
+  },
+  "freeze_decision": "NOT_FROZEN",
+  "freeze_blockers": [
+    "35_MANDATORY_RUNTIME_FIXTURES_NOT_SUPPLIED",
+    "FULL_SYRIAN_LABELED_CORPUS_SANDBOX_NOT_RUN",
+    "ACTUAL_NEO4J_SCHEMA_SNAPSHOT_MISSING",
+    "41_EXECUTABLE_CYPHER_TEMPLATES_NOT_TESTED",
+    "PER_PRODUCTION_TYPE_MAPPINGS_MISSING",
+    "FINAL_HUMAN_SYRIAN_LEGAL_SIGNOFF_PENDING"
+  ],
+  "validation_boundary": [
+    "Issue candidates are reviewable candidates only.",
+    "Court treatment never finalizes without DECISION_POSITION binding and provenance.",
+    "Research handoff never resolves legal references; LEGAL_REFERENCE_ROLE remains authoritative.",
+    "Derived D30 summary produces zero issue candidates.",
+    "Contract-harness execution of 35 scenario descriptions does not substitute for missing source runtime fixtures or a labeled Syrian corpus."
+  ]
+}
